@@ -5,7 +5,7 @@ import { JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 import { AppConfigFactory } from './app-config.factory';
 
 @Injectable()
-export class JwtConfigService {
+export class JwtConfigFactory {
   constructor(
     private readonly configService: ConfigService,
     private readonly appConfigFactory: AppConfigFactory,
