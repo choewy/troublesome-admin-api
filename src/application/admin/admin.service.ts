@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'argon2';
 import { Repository } from 'typeorm';
 
-import { AdminDTO, AdminListDTO, CreateAdminDTO } from './dtos';
+import { AdminDTO, AdminListDTO, CreateAdminDTO, UpdateAdminDTO } from './dtos';
 import {
   AlreadyExistAdminException,
   CannotUpdateOrRemoveAdminException,
@@ -11,7 +11,7 @@ import {
   PasswordMismatchException,
 } from './exceptions';
 
-import { AdminRootConfigFactory } from '@/common';
+import { AdminRootConfigFactory, toUndefined } from '@/common';
 import { AdminEntity } from '@/libs';
 
 @Injectable()
@@ -97,6 +97,27 @@ export class AdminService implements OnModuleInit {
       email: body.email,
       name: body.name,
       password: await hash(body.password),
+    });
+  }
+
+  async updateById(id: number, body: UpdateAdminDTO) {
+    const admin = await this.findById(id);
+
+    if (admin === null) {
+      throw new NotFoundAdminException();
+    }
+
+    if (admin.isRoot) {
+      throw new CannotUpdateOrRemoveAdminException();
+    }
+
+    if (body.password !== body.confirmPassword) {
+      throw new PasswordMismatchException();
+    }
+
+    await this.adminRepository.update(id, {
+      name: toUndefined(body.name),
+      password: body.password ? await hash(body.password) : undefined,
     });
   }
 

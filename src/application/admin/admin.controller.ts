@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AdminService } from './admin.service';
-import { AdminDTO, AdminListDTO, CreateAdminDTO } from './dtos';
+import { AdminDTO, AdminListDTO, CreateAdminDTO, UpdateAdminDTO } from './dtos';
 
 import { Private, Root } from '@/common';
 
@@ -32,6 +32,14 @@ export class AdminController {
   @ApiCreatedResponse()
   async create(@Body() body: CreateAdminDTO) {
     return this.adminService.create(body);
+  }
+
+  @Patch(':id(\\d+)')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '관리자 계정 수정' })
+  @ApiNoContentResponse()
+  async updateById(@Param('id', new ParseIntPipe()) id: number, @Body() body: UpdateAdminDTO) {
+    return this.adminService.updateById(id, body);
   }
 
   @Delete(':id(\\d+)')
