@@ -1,9 +1,9 @@
 import { TokenExpiredError } from '@nestjs/jwt';
 
-import { JwtTokenPayload } from './interfaces';
+import { JwtCustomPayload } from './interfaces';
 
-export class JwtTokenVerifyResult {
-  payload: JwtTokenPayload;
+export class JwtVerifyResult {
+  payload: JwtCustomPayload;
   error: unknown;
   expired: boolean;
 
@@ -13,7 +13,7 @@ export class JwtTokenVerifyResult {
     this.expired = error instanceof TokenExpiredError;
   }
 
-  setPayload(payload: JwtTokenPayload) {
+  setPayload(payload: JwtCustomPayload) {
     this.payload = payload;
 
     return this;

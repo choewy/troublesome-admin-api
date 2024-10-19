@@ -6,7 +6,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { LoginDTO, TokensDTO } from './dtos';
 import { InvalidAdminException, InvalidEmailOrPasswordException } from './exceptions';
 import { AdminService } from '../admin';
-import { JwtTokenPayload, JwtTokenVerifyResult } from './implements';
+import { JwtCustomPayload, JwtVerifyResult } from './implements';
 
 import { JwtConfigFactory } from '@/common';
 import { ContextService } from '@/core';
@@ -51,7 +51,7 @@ export class AuthService {
     return this.jwtService.sign({ id: payload.id }, this.jwtConfigFactory.getRefreshTokenSignOptions());
   }
 
-  validateJwtTokenPayload(payload: JwtTokenPayload) {
+  validateJwtPayload(payload: JwtCustomPayload) {
     if (typeof payload.id === 'number') {
       return payload;
     }
@@ -59,9 +59,9 @@ export class AuthService {
     throw new JsonWebTokenError('invalid jwt token payload');
   }
 
-  verifyAccessToken(accessToken: string, error: unknown = null): JwtTokenVerifyResult {
+  verifyAccessToken(accessToken: string, error: unknown = null): JwtVerifyResult {
     const expired = error instanceof TokenExpiredError;
-    const verifyResult = new JwtTokenVerifyResult(error);
+    const verifyResult = new JwtVerifyResult(error);
 
     if (error && expired === false) {
       return verifyResult;
@@ -70,7 +70,7 @@ export class AuthService {
     const options = this.jwtConfigFactory.getAccessTokenVerifyOptions(verifyResult.expired);
 
     try {
-      const payload = this.validateJwtTokenPayload(this.jwtService.verify(accessToken, options));
+      const payload = this.validateJwtPayload(this.jwtService.verify(accessToken, options));
 
       return verifyResult.setPayload(payload);
     } catch (e) {
@@ -78,12 +78,12 @@ export class AuthService {
     }
   }
 
-  verifyRefreshToken(refreshToken: string): JwtTokenVerifyResult {
+  verifyRefreshToken(refreshToken: string): JwtVerifyResult {
     const options = this.jwtConfigFactory.getRefreshTokenVerifyOptions();
-    const verifyResult = new JwtTokenVerifyResult();
+    const verifyResult = new JwtVerifyResult();
 
     try {
-      const payload = this.validateJwtTokenPayload(this.jwtService.verify(refreshToken, options));
+      const payload = this.validateJwtPayload(this.jwtService.verify(refreshToken, options));
 
       return verifyResult.setPayload(payload);
     } catch (e) {

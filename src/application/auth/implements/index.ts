@@ -1,2 +1,2 @@
 export * from './interfaces';
-export * from './jwt-token-verify-result';
+export * from './jwt-verify-result';
