@@ -1,4 +1,4 @@
-import { NodeEnv } from './enums';
+import { NodeEnv } from '../enums';
 
 export const getEnv = () => process.env.NODE_ENV ?? NodeEnv.Local;
 export const isLocal = () => getEnv() === NodeEnv.Local;
