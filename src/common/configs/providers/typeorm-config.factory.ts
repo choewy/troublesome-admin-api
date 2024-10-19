@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from 'typeorm';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
@@ -9,7 +10,7 @@ import { isLocal } from '../helpers';
 export class TypeOrmConfigFactory {
   constructor(private readonly configService: ConfigService) {}
 
-  public get typeOrmModuleOptions(): MysqlConnectionOptions {
+  public createTypeOrmModuleOptions(logger?: 'advanced-console' | 'simple-console' | 'file' | 'debug' | Logger): MysqlConnectionOptions {
     return {
       type: 'mariadb',
       host: this.configService.getOrThrow('DB_HOST'),
@@ -21,6 +22,7 @@ export class TypeOrmConfigFactory {
       entities: [`${process.cwd()}/dist/**/*.entity.{ts,js}`],
       logging: ['info', 'error', 'warn'],
       synchronize: isLocal(),
+      logger,
     };
   }
 }
