@@ -16,3 +16,7 @@ export enum ResponseHeader {
   AccessToken = 'X-ACCESS-TOKEN',
   RefreshToken = 'X-REFRESH-TOKEN',
 }
+
+export enum SetMetadataKey {
+  AccessModifier = 'accessModifier',
+}

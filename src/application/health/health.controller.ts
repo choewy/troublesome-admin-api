@@ -3,6 +3,9 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { HealthService } from './health.service';
 
+import { Public } from '@/common';
+
+@Public()
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {

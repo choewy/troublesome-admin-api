@@ -6,7 +6,7 @@ import { AppConfigFactory } from '@/common';
 export class AppService {
   constructor(private readonly appConfigFactory: AppConfigFactory) {}
 
-  public getVersion() {
+  public getPackageProfile() {
     return this.appConfigFactory.packageProfile;
   }
 }
