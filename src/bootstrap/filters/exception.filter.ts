@@ -8,20 +8,12 @@ export class ExceptionFilter implements NestExceptionFilter {
     const request = http.getRequest<Request>();
     const response = http.getResponse<Response>();
 
-    let exception = e as HttpException;
-
-    if (e instanceof HttpException === false) {
-      exception = new InternalServerErrorException(e);
-      exception.name = InternalServerErrorException.name;
-      exception.cause = {
-        name: e.name,
-        message: e.message,
-      };
-    }
+    const exception = e instanceof HttpException ? e : new InternalServerErrorException(e, { cause: { name: e.name, message: e.message } });
+    const exceptionName = Object.getPrototypeOf(e).constructor.name.replace('Exception', '');
 
     return response.status(exception.getStatus()).send({
       id: request['id'],
-      name: exception.name.replace('Exception', ''),
+      name: exceptionName,
       statusCode: exception.getStatus(),
       message: exception.message,
       cause: exception.cause,
