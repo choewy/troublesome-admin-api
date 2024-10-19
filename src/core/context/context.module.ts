@@ -2,6 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ClsModule } from 'nestjs-cls';
 import { v4 } from 'uuid';
 
+import { ContextQueryLogger } from './context-query.logger';
 import { ContextInterceptor } from './context.interceptor';
 import { ContextService } from './context.service';
 import { ContextPropertyKey } from './enums';
@@ -26,8 +27,8 @@ export class ContextModule extends ClsModule {
       global: true,
       module: ContextModule,
       imports: [clsModule],
-      providers: [ContextService, ContextInterceptor],
-      exports: [ContextService, ContextInterceptor],
+      providers: [ContextService, ContextQueryLogger, ContextInterceptor],
+      exports: [ContextService, ContextQueryLogger, ContextInterceptor],
     };
   }
 }

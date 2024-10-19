@@ -1,4 +1,4 @@
-import { DynamicModule, Global, Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { DynamicModule, Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { utilities, WINSTON_MODULE_NEST_PROVIDER, WinstonModule, WinstonLogger } from 'nest-winston';
 import * as winston from 'winston';
 
@@ -6,28 +6,7 @@ import { LoggerMiddleware } from './logger.middleware';
 
 import { isLocal } from '@/common';
 
-@Global()
-@Module({
-  providers: [
-    {
-      provide: WinstonLogger,
-      inject: [WINSTON_MODULE_NEST_PROVIDER],
-      useFactory(winstonLogger: WinstonLogger) {
-        return Logger.overrideLogger(winstonLogger);
-      },
-    },
-    LoggerMiddleware,
-  ],
-  exports: [
-    {
-      provide: WinstonLogger,
-      inject: [WINSTON_MODULE_NEST_PROVIDER],
-      useFactory(winstonLogger: WinstonLogger) {
-        return Logger.overrideLogger(winstonLogger);
-      },
-    },
-  ],
-})
+@Module({})
 export class LoggerModule implements NestModule {
   public static forRoot(): DynamicModule {
     return {
