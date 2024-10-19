@@ -14,6 +14,9 @@ export class AdminEntity {
   @Column({ type: 'varchar', length: 50, comment: '이름' })
   name: string;
 
+  @Column({ type: 'boolean', default: false, comment: '최상위관리자 여부' })
+  isRoot: boolean;
+
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;
 

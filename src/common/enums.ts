@@ -19,4 +19,5 @@ export enum ResponseHeader {
 
 export enum SetMetadataKey {
   AccessModifier = 'accessModifier',
+  Root = 'root',
 }
