@@ -11,6 +11,10 @@ export class AdminService {
     private readonly adminRepository: Repository<AdminEntity>,
   ) {}
 
+  async findById(id: number) {
+    return this.adminRepository.findOneBy({ id });
+  }
+
   async findByEmail(email: string) {
     return this.adminRepository.findOneBy({ email });
   }

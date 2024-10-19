@@ -39,36 +39,38 @@ export class JwtConfigFactory {
     };
   }
 
-  public get accessTokenSignOptions(): JwtSignOptions {
+  public getAccessTokenSignOptions(expiresIn = '1d'): JwtSignOptions {
     const signOptions = this.accessTokenOptions as JwtSignOptions;
 
     signOptions.secret = this.accessTokenSecret;
-    signOptions.expiresIn = '1d';
+    signOptions.expiresIn = expiresIn;
 
     return signOptions;
   }
 
-  public get refreshTokenSignOptions(): JwtSignOptions {
+  public getRefreshTokenSignOptions(expiresIn = '14d'): JwtSignOptions {
     const signOptions = this.refreshTokenOptions as JwtSignOptions;
 
     signOptions.secret = this.refreshTokenSecret;
-    signOptions.expiresIn = '14d';
+    signOptions.expiresIn = expiresIn;
 
     return signOptions;
   }
 
-  public get accessTokenVerifyOptions(): JwtVerifyOptions {
+  public getAccessTokenVerifyOptions(ignoreExpiration?: boolean): JwtVerifyOptions {
     const verifyOptions = this.accessTokenOptions as JwtVerifyOptions;
 
     verifyOptions.secret = this.accessTokenSecret;
+    verifyOptions.ignoreExpiration = ignoreExpiration;
 
     return verifyOptions;
   }
 
-  public get refreshTokenVerifyOptions(): JwtVerifyOptions {
+  public getRefreshTokenVerifyOptions(ignoreExpiration?: boolean): JwtVerifyOptions {
     const verifyOptions = this.refreshTokenOptions as JwtVerifyOptions;
 
     verifyOptions.secret = this.refreshTokenSecret;
+    verifyOptions.ignoreExpiration = ignoreExpiration;
 
     return verifyOptions;
   }

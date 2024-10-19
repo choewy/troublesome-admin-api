@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { verify } from 'argon2';
+import { JwtPayload } from 'jsonwebtoken';
 
 import { LoginDTO, TokensDTO } from './dtos';
-import { InvalidEmailOrPasswordException } from './exceptions';
+import { InvalidAdminException, InvalidEmailOrPasswordException } from './exceptions';
 import { AdminService } from '../admin';
+import { JwtTokenPayload, JwtTokenVerifyResult } from './implements';
 
 import { JwtConfigFactory } from '@/common';
-import { AdminEntity } from '@/libs';
+import { ContextService } from '@/core';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +17,7 @@ export class AuthService {
     private readonly adminService: AdminService,
     private readonly jwtService: JwtService,
     private readonly jwtConfigFactory: JwtConfigFactory,
+    private readonly contextService: ContextService,
   ) {}
 
   async login(body: LoginDTO) {
@@ -33,18 +36,68 @@ export class AuthService {
     return new TokensDTO(tokens.accessToken, tokens.refreshToken);
   }
 
-  issueTokens(admin: AdminEntity) {
+  issueTokens(payload: JwtPayload) {
     return {
-      accessToken: this.issueAccessToken(admin),
-      refreshToken: this.issueRefreshToken(admin),
+      accessToken: this.issueAccessToken(payload),
+      refreshToken: this.issueRefreshToken(payload),
     };
   }
 
-  issueAccessToken(admin: AdminEntity) {
-    return this.jwtService.sign({ id: admin.id }, this.jwtConfigFactory.accessTokenSignOptions);
+  issueAccessToken(payload: JwtPayload) {
+    return this.jwtService.sign({ id: payload.id }, this.jwtConfigFactory.getAccessTokenSignOptions());
   }
 
-  issueRefreshToken(admin: AdminEntity) {
-    return this.jwtService.sign({ id: admin.id }, this.jwtConfigFactory.refreshTokenSignOptions);
+  issueRefreshToken(payload: JwtPayload) {
+    return this.jwtService.sign({ id: payload.id }, this.jwtConfigFactory.getRefreshTokenSignOptions());
+  }
+
+  validateJwtTokenPayload(payload: JwtTokenPayload) {
+    if (typeof payload.id === 'number') {
+      return payload;
+    }
+
+    throw new JsonWebTokenError('invalid jwt token payload');
+  }
+
+  verifyAccessToken(accessToken: string, error: unknown = null): JwtTokenVerifyResult {
+    const expired = error instanceof TokenExpiredError;
+    const verifyResult = new JwtTokenVerifyResult(error);
+
+    if (error && expired === false) {
+      return verifyResult;
+    }
+
+    const options = this.jwtConfigFactory.getAccessTokenVerifyOptions(verifyResult.expired);
+
+    try {
+      const payload = this.validateJwtTokenPayload(this.jwtService.verify(accessToken, options));
+
+      return verifyResult.setPayload(payload);
+    } catch (e) {
+      return this.verifyAccessToken(accessToken, e);
+    }
+  }
+
+  verifyRefreshToken(refreshToken: string): JwtTokenVerifyResult {
+    const options = this.jwtConfigFactory.getRefreshTokenVerifyOptions();
+    const verifyResult = new JwtTokenVerifyResult();
+
+    try {
+      const payload = this.validateJwtTokenPayload(this.jwtService.verify(refreshToken, options));
+
+      return verifyResult.setPayload(payload);
+    } catch (e) {
+      return verifyResult.setError(e);
+    }
+  }
+
+  async setRequestUserContext(id: number) {
+    const admin = await this.adminService.findById(id);
+
+    if (admin === null) {
+      throw new InvalidAdminException();
+    }
+
+    this.contextService.setRequestUser(admin);
   }
 }
