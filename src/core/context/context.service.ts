@@ -5,24 +5,26 @@ import { ContextPropertyKey } from './enums';
 import { RequestUser, RequestUserPartial } from './implements';
 
 @Injectable()
-export class ContextService extends ClsService {
+export class ContextService {
+  constructor(private readonly clsService: ClsService) {}
+
   getRequestID() {
-    return this.get(ContextPropertyKey.RequestId);
+    return this.clsService.get(ContextPropertyKey.RequestId);
   }
 
   getRequestUser(): RequestUser<any> | null {
-    return this.get(ContextPropertyKey.RequestUser) ?? null;
+    return this.clsService.get(ContextPropertyKey.RequestUser) ?? null;
   }
 
   getExecutionContext(): ExecutionContext {
-    return this.get(ContextPropertyKey.ExecutionContext) ?? null;
+    return this.clsService.get(ContextPropertyKey.ExecutionContext) ?? null;
   }
 
   setRequestUser<T extends RequestUserPartial>(user: T) {
-    this.set(ContextPropertyKey.RequestUser, new RequestUser(user));
+    this.clsService.set(ContextPropertyKey.RequestUser, new RequestUser(user));
   }
 
   setExecutionContext(executionContext: ExecutionContext) {
-    this.set(ContextPropertyKey.ExecutionContext, executionContext);
+    this.clsService.set(ContextPropertyKey.ExecutionContext, executionContext);
   }
 }

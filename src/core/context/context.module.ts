@@ -2,6 +2,8 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ClsModule } from 'nestjs-cls';
 import { v4 } from 'uuid';
 
+import { ContextInterceptor } from './context.interceptor';
+import { ContextService } from './context.service';
 import { ContextPropertyKey } from './enums';
 
 import { RequestHeader, ResponseHeader } from '@/common';
@@ -9,7 +11,7 @@ import { RequestHeader, ResponseHeader } from '@/common';
 @Module({})
 export class ContextModule extends ClsModule {
   public static forRoot(): DynamicModule {
-    const dynamicModule = super.forRoot({
+    const clsModule = ClsModule.forRoot({
       middleware: {
         mount: true,
         setup(clsService, req, res) {
@@ -20,8 +22,12 @@ export class ContextModule extends ClsModule {
       },
     });
 
-    dynamicModule.global = true;
-
-    return dynamicModule;
+    return {
+      global: true,
+      module: ContextModule,
+      imports: [clsModule],
+      providers: [ContextService, ContextInterceptor],
+      exports: [ContextService, ContextInterceptor],
+    };
   }
 }
