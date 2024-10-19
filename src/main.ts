@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { AppConfigFactory, isLocal } from './common';
+import { ContextInterceptor } from './core';
 
-import { Swagger, SwaggerDocumentOptions } from '@/bootstrap';
+import { ExceptionFilter, SerializeInterceptor, Swagger, SwaggerDocumentOptions, ValidationPipe } from '@/bootstrap';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
@@ -24,9 +25,9 @@ const bootstrap = async () => {
 
   app.enableShutdownHooks();
   app.enableCors(corsOptions);
-  app.useGlobalInterceptors();
-  app.useGlobalPipes();
-  app.useGlobalFilters();
+  app.useGlobalInterceptors(new SerializeInterceptor(app.get(Reflector)), app.get(ContextInterceptor));
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new ExceptionFilter());
   app.useGlobalGuards();
 
   await app.listen(port, host);
