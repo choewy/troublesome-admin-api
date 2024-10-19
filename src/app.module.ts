@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ApplicationModule } from './application';
 import { ConfigFactoryModule, TypeOrmConfigFactory } from './common';
 import { ContextModule, ContextQueryLogger, LoggerModule } from './core';
 
@@ -15,6 +18,9 @@ import { ContextModule, ContextQueryLogger, LoggerModule } from './core';
         return configFactory.createTypeOrmModuleOptions(contextQueryLogger);
       },
     }),
+    ApplicationModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
