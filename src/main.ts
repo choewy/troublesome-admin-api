@@ -2,8 +2,8 @@ import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { RootGuard } from './application/admin';
-import { JwtGuard } from './application/auth';
-import { AppConfigFactory, isLocal } from './common';
+import { AuthService, JwtGuard } from './application/auth';
+import { AdminRootConfigFactory, AppConfigFactory, isLocal } from './common';
 import { ContextInterceptor } from './core';
 
 import { ExceptionFilter, SerializeInterceptor, Swagger, SwaggerDocumentOptions, ValidationPipe } from '@/bootstrap';
@@ -14,9 +14,17 @@ const bootstrap = async () => {
   const packageProfile = appConfigFactory.packageProfile;
 
   if (isLocal()) {
+    const adminRootConfigFactory = app.get(AdminRootConfigFactory);
+    const adminRoot = adminRootConfigFactory.value;
+    const authService = app.get(AuthService);
+
     const swaggerOptions: SwaggerDocumentOptions = {
       title: packageProfile.name,
       version: packageProfile.version,
+      authOption: {
+        accessToken: authService.issueAccessToken(adminRoot),
+        refreshToken: authService.issueAccessToken(adminRoot),
+      },
     };
 
     Swagger.setup(app, swaggerOptions);

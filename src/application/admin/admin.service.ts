@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'argon2';
 import { Repository } from 'typeorm';
@@ -6,22 +6,56 @@ import { Repository } from 'typeorm';
 import { CreateAdminDTO } from './dtos';
 import { AlreadyExistAdminException, CannotAccessException, PasswordMismatchException } from './exceptions';
 
+import { AdminRootConfigFactory } from '@/common';
 import { ContextService } from '@/core';
 import { AdminEntity } from '@/libs';
 
 @Injectable()
-export class AdminService {
+export class AdminService implements OnModuleInit {
   constructor(
     @InjectRepository(AdminEntity)
     private readonly adminRepository: Repository<AdminEntity>,
     private readonly contextService: ContextService,
+    private readonly adminRootConfigFactory: AdminRootConfigFactory,
   ) {}
+
+  async onModuleInit() {
+    const value = this.adminRootConfigFactory.value;
+
+    if (await this.hasById(value.id)) {
+      return;
+    }
+
+    await this.adminRepository.insert({
+      id: value.id,
+      name: value.name,
+      email: value.email,
+      password: await hash(value.password),
+      isRoot: true,
+    });
+  }
 
   async isRoot() {
     const requestUser = this.contextService.getRequestUser();
     const admin = await this.findById(requestUser?.id);
 
     return admin?.isRoot === true;
+  }
+
+  async hasById(id: number) {
+    if (id == null) {
+      return false;
+    }
+
+    return (await this.adminRepository.countBy({ id })) > 0;
+  }
+
+  async hasByEmail(email: string) {
+    if (email == null) {
+      return false;
+    }
+
+    return (await this.adminRepository.countBy({ email })) > 0;
   }
 
   async findById(id: number) {
@@ -38,14 +72,6 @@ export class AdminService {
     }
 
     return this.adminRepository.findOneBy({ email });
-  }
-
-  async hasByEmail(email: string) {
-    if (email == null) {
-      return false;
-    }
-
-    return (await this.adminRepository.countBy({ email })) > 0;
   }
 
   async create(body: CreateAdminDTO) {
