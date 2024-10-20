@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { verify } from 'argon2';
-import { JwtPayload } from 'jsonwebtoken';
 
-import { LoginDTO, TokensDTO } from './dtos';
-import { InvalidAdminException, InvalidEmailOrPasswordException } from './exceptions';
+import { LoginDTO, TokensDTO, UpdatePasswordDTO } from './dtos';
+import { InvalidAdminException, InvalidEmailOrPasswordException, WrongPasswordException } from './exceptions';
 import { AdminService } from '../admin';
 import { JwtCustomPayload, JwtVerifyResult } from './implements';
 
@@ -36,18 +35,32 @@ export class AuthService {
     return new TokensDTO(tokens.accessToken, tokens.refreshToken);
   }
 
-  issueTokens(payload: JwtPayload) {
+  async updatePassword(body: UpdatePasswordDTO) {
+    const requestUser = this.contextService.getRequestUser();
+    const admin = await this.adminService.findById(requestUser.id);
+
+    if (await verify(admin.password, body.currentPassword)) {
+      throw new WrongPasswordException();
+    }
+
+    await this.adminService.updateById(admin.id, {
+      password: body.newPassword,
+      confirmPassword: body.confirmPassword,
+    });
+  }
+
+  issueTokens(payload: JwtCustomPayload) {
     return {
       accessToken: this.issueAccessToken(payload),
       refreshToken: this.issueRefreshToken(payload),
     };
   }
 
-  issueAccessToken(payload: JwtPayload) {
+  issueAccessToken(payload: JwtCustomPayload) {
     return this.jwtService.sign({ id: payload.id }, this.jwtConfigFactory.getAccessTokenSignOptions());
   }
 
-  issueRefreshToken(payload: JwtPayload) {
+  issueRefreshToken(payload: JwtCustomPayload) {
     return this.jwtService.sign({ id: payload.id }, this.jwtConfigFactory.getRefreshTokenSignOptions());
   }
 
