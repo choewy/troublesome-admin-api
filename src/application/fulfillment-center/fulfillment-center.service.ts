@@ -172,6 +172,12 @@ export class FulfillmentCenterService {
   }
 
   async findById(id: number) {
-    return this.fulfillmentCenterRepository.findOneBy({ id });
+    return this.fulfillmentCenterRepository.findOne({
+      relations: {
+        fulfillmentCompany: true,
+        deliveryCompanySettings: { deliveryCompany: true },
+      },
+      where: { id },
+    });
   }
 }
