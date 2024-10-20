@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Like, Repository } from 'typeorm';
 
-import { CreatePartnerDTO, UpdatePartnerDTO } from './dtos';
+import { CreatePartnerDTO, PartnerDTO, PartnerListDTO, PartnerListQueryDTO, UpdatePartnerDTO } from './dtos';
 import { NotFoundPartnerException } from './exceptions';
 
 import { toUndefinedOrNull } from '@/common';
@@ -17,6 +17,29 @@ export class PartnerService {
 
   getRepository(em?: EntityManager) {
     return em ? em.getRepository(PartnerEntity) : this.partnerRepository;
+  }
+
+  async getList(query: PartnerListQueryDTO) {
+    return new PartnerListDTO(
+      await this.partnerRepository.findAndCount({
+        where: {
+          name: query.name ? Like(`%${query.name.trim()}%`) : undefined,
+          president: query.president ? Like(`%${query.president.trim()}%`) : undefined,
+        },
+        skip: query.skip,
+        take: query.take,
+      }),
+    );
+  }
+
+  async getById(id: number) {
+    const partner = await this.findById(id);
+
+    if (partner === null) {
+      throw new NotFoundPartnerException();
+    }
+
+    return new PartnerDTO(partner);
   }
 
   async create(body: CreatePartnerDTO) {
@@ -64,5 +87,9 @@ export class PartnerService {
       select: { id: true },
       where: { id },
     }));
+  }
+
+  async findById(id: number) {
+    return this.partnerRepository.findOneBy({ id });
   }
 }
