@@ -39,13 +39,13 @@ export class FulfillmentCompanyService {
   }
 
   async getById(id: number) {
-    const partner = await this.findById(id);
+    const fulfillmentCompany = await this.findById(id);
 
-    if (partner === null) {
+    if (fulfillmentCompany === null) {
       throw new NotFoundFulfillmentCompanyException();
     }
 
-    return new FulfillmentCompanyDTO(partner);
+    return new FulfillmentCompanyDTO(fulfillmentCompany);
   }
 
   async create(body: CreateFulfillmentCompanyDTO) {
