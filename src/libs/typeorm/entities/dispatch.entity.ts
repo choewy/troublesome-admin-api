@@ -11,7 +11,7 @@ import {
 
 import { DeliveryCompanyEntity } from './delivery-company.entity';
 import { createForeignKeyConstraintName } from '../helpers';
-import { FulfillmentEntity } from './fulfillment.entity';
+import { FulfillmentCenterEntity } from './fulfillment-center.entity';
 
 @Entity({ name: 'dispatch', comment: '출고' })
 export class DispatchEntity {
@@ -19,11 +19,11 @@ export class DispatchEntity {
   readonly id: number;
 
   @Column({ type: 'int', unsigned: true, nullable: true })
-  fulfillmentId: number;
+  fulfillmentCenterId: number;
 
   @ManyToOne(() => DeliveryCompanyEntity, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ foreignKeyConstraintName: createForeignKeyConstraintName('dispatch', 'fulfillment', 'id') })
-  fulfillment: FulfillmentEntity | null;
+  @JoinColumn({ foreignKeyConstraintName: createForeignKeyConstraintName('dispatch', 'fulfillment_center', 'id') })
+  fulfillmentCenter: FulfillmentCenterEntity | null;
 
   @Column({ type: 'int', unsigned: true, nullable: true })
   deliveryCompanyId: number;
