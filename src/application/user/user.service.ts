@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UserDTO } from './dtos';
 import { NotFoundUserException } from './exceptions';
@@ -13,6 +13,10 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
+
+  getRepository(em?: EntityManager) {
+    return em ? em.getRepository(UserEntity) : this.userRepository;
+  }
 
   async findById(id: number) {
     return this.userRepository.findOneBy({ id });

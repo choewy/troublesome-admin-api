@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'argon2';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { AdminDTO, AdminListDTO, CreateAdminDTO, UpdateAdminDTO } from './dtos';
 import {
@@ -21,6 +21,10 @@ export class AdminService implements OnModuleInit {
     private readonly adminRepository: Repository<AdminEntity>,
     private readonly adminRootConfigFactory: AdminRootConfigFactory,
   ) {}
+
+  getRepository(em?: EntityManager) {
+    return em ? em.getRepository(AdminEntity) : this.adminRepository;
+  }
 
   async onModuleInit() {
     const value = this.adminRootConfigFactory.value;
