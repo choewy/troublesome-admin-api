@@ -4,7 +4,9 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   JoinTable,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,7 +17,8 @@ import { DeliveryCompanySettingEntity } from './delivery-company-setting.entity'
 import { LocationEntity } from './location.entity';
 import { RoleEntity } from './role.entity';
 import { UserEntity } from './user.entity';
-import { createIndexConstraintName } from '../helpers';
+import { createForeignKeyConstraintName, createIndexConstraintName } from '../helpers';
+import { FulfillmentCompanyEntity } from './fulfillment-company.entity';
 
 @Index(createIndexConstraintName('fulfillment_center', 'plant_code'), ['plantCode'])
 @Entity({ name: 'fulfillment_center', comment: '풀필먼트 센터' })
@@ -29,11 +32,14 @@ export class FulfillmentCenterEntity {
   @Column({ type: 'varchar', length: 5, comment: '풀필먼트 센터 플랜트 코드' })
   plantCode: string;
 
-  @Column({ type: 'varchar', length: 20, default: null, comment: '연락처' })
-  tel: string | null;
+  @Column({ type: 'varchar', length: 50, default: null, comment: '발송인명' })
+  consignerName: string | null;
 
-  @Column({ type: 'varchar', length: 20, default: null, comment: '연락처' })
-  phone: string | null;
+  @Column({ type: 'varchar', length: 20, default: null, comment: '발송인 연락처' })
+  consignerTel: string | null;
+
+  @Column({ type: 'varchar', length: 20, default: null, comment: '발송인 휴대폰' })
+  consignerPhone: string | null;
 
   @Column({ type: 'varchar', length: 6, default: null, comment: '우편번호' })
   zipCode: string | null;
@@ -43,6 +49,13 @@ export class FulfillmentCenterEntity {
 
   @Column({ type: 'varchar', length: 100, default: null, comment: '상세주소' })
   addressDetail: string | null;
+
+  @Column({ type: 'int', unsigned: true, nullable: true })
+  fulfillmentCompanyId: number | null;
+
+  @ManyToOne(() => FulfillmentCompanyEntity, (e) => e.fulfillmentCenters, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ foreignKeyConstraintName: createForeignKeyConstraintName('fulfillment_center', 'fulfillment_company', 'id') })
+  fulfillmentCompany: FulfillmentCompanyEntity | null;
 
   @OneToMany(() => DeliveryCompanySettingEntity, (e) => e.fulfillmentCenter, { cascade: true })
   @JoinTable()
