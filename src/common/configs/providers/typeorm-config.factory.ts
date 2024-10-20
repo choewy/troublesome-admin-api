@@ -19,7 +19,7 @@ export class TypeOrmConfigFactory {
       password: this.configService.getOrThrow('DB_PASSWORD'),
       database: this.configService.getOrThrow('DB_DATABASE'),
       namingStrategy: new SnakeNamingStrategy(),
-      entities: [`${process.cwd()}/dist/**/*.entity.{ts,js}`],
+      entities: [`${process.cwd()}/dist/libs/typeorm/entities/**/*.entity.{ts,js}`],
       logging: ['info', 'error', 'warn'],
       synchronize: isLocal(),
       logger,
