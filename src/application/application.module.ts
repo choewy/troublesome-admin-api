@@ -8,6 +8,7 @@ import { FulfillmentModule } from './fulfillment';
 import { FulfillmentCompanyModule } from './fulfillment-company';
 import { HealthModule } from './health';
 import { PartnerModule } from './partner';
+import { PartnerCompanyModule } from './partner-company';
 import { UserModule } from './user';
 
 @Module({
@@ -16,11 +17,12 @@ import { UserModule } from './user';
     AdminModule,
     AuthModule,
     UserModule,
-    PartnerModule,
     DeliveryCompanyModule,
     DeliveryCompanySettingModule,
     FulfillmentCompanyModule,
     FulfillmentModule,
+    PartnerCompanyModule,
+    PartnerModule,
   ],
 })
 export class ApplicationModule {}

@@ -39,7 +39,7 @@ export class RoleEntity {
   partner: PartnerEntity | null;
 
   @Column({ type: 'int', unsigned: true, nullable: true })
-  fulfillmentCenterId: number | null;
+  fulfillmentId: number | null;
 
   @ManyToOne(() => FulfillmentEntity, (e) => e.roles, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ foreignKeyConstraintName: createForeignKeyConstraintName('role', 'fulfillment', 'id') })

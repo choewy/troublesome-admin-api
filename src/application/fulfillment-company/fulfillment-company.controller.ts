@@ -14,7 +14,7 @@ import { Private } from '@/common';
 
 @Private()
 @ApiTags('풀필먼트 업체')
-@Controller('fulfillment/companies')
+@Controller('fulfillment-companies')
 export class FulfillmentCompanyController {
   constructor(private readonly fulfillmentCompanyService: FulfillmentCompanyService) {}
 
