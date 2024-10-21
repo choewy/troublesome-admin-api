@@ -127,7 +127,7 @@ export class FulfillmentService {
         zipCode: toUndefinedOrNull(body.zipCode),
         address: toUndefinedOrNull(body.address),
         addressDetail: toUndefinedOrNull(body.addressDetail),
-        fulfillmentCompanyId: toUndefinedOrNull(body.fulfillmentCompanyId),
+        fulfillmentCompanyId: toUndefined(toNull(body.fulfillmentCompanyId)),
       });
 
       if (toUndefinedOrNull(body.deliveryCompanyId)) {

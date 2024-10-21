@@ -1,11 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString, IsUrl, Length } from 'class-validator';
+import { IsEmail, IsInt, IsNotEmpty, IsNumberString, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 
 export class CreatePartnerDTO {
   @ApiProperty({ type: String })
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty({ type: Number })
+  @IsInt()
+  @IsNotEmpty()
+  partnerCompanyId: number;
 
   @ApiPropertyOptional({ type: String })
   @IsString()

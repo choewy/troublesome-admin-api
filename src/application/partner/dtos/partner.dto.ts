@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { PartnerCompanyDTO } from '@/application/partner-company';
 import { PartnerEntity } from '@/libs';
 
 export class PartnerDTO {
@@ -39,6 +40,9 @@ export class PartnerDTO {
   @ApiProperty({ type: Date })
   updatedAt: Date;
 
+  @ApiProperty({ type: PartnerCompanyDTO })
+  partnerCompany: PartnerCompanyDTO | null;
+
   constructor(partner: PartnerEntity) {
     this.id = partner.id;
     this.name = partner.name;
@@ -52,5 +56,6 @@ export class PartnerDTO {
     this.addressDetail = partner.addressDetail ?? '';
     this.createdAt = partner.createdAt;
     this.updatedAt = partner.updatedAt;
+    this.partnerCompany = partner.partnerCompany ? new PartnerCompanyDTO(partner.partnerCompany) : null;
   }
 }

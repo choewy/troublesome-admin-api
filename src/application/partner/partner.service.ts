@@ -4,8 +4,9 @@ import { EntityManager, Like, Repository } from 'typeorm';
 
 import { CreatePartnerDTO, PartnerDTO, PartnerListDTO, PartnerListQueryDTO, UpdatePartnerDTO } from './dtos';
 import { NotFoundPartnerException } from './exceptions';
+import { NotFoundPartnerCompanyException, PartnerCompanyService } from '../partner-company';
 
-import { toUndefinedOrNull } from '@/common';
+import { toNull, toUndefined, toUndefinedOrNull } from '@/common';
 import { PartnerEntity } from '@/libs';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class PartnerService {
   constructor(
     @InjectRepository(PartnerEntity)
     private readonly partnerRepository: Repository<PartnerEntity>,
+    private readonly partnerCompanyService: PartnerCompanyService,
   ) {}
 
   getRepository(em?: EntityManager) {
@@ -22,9 +24,12 @@ export class PartnerService {
   async getList(query: PartnerListQueryDTO) {
     return new PartnerListDTO(
       await this.partnerRepository.findAndCount({
+        relations: { partnerCompany: true },
         where: {
           name: query.name ? Like(`%${query.name.trim()}%`) : undefined,
-          president: query.president ? Like(`%${query.president.trim()}%`) : undefined,
+          partnerCompany: query.partnerCompanyName
+            ? { name: query.partnerCompanyName ? Like(`%${query.partnerCompanyName.trim()}%`) : undefined }
+            : undefined,
         },
         skip: query.skip,
         take: query.take,
@@ -43,6 +48,10 @@ export class PartnerService {
   }
 
   async create(body: CreatePartnerDTO) {
+    if ((await this.partnerCompanyService.hasById(body.partnerCompanyId)) === false) {
+      throw new NotFoundPartnerCompanyException();
+    }
+
     await this.partnerRepository.insert({
       name: body.name,
       president: body.president,
@@ -53,6 +62,7 @@ export class PartnerService {
       zipCode: body.zipCode,
       address: body.address,
       addressDetail: body.addressDetail,
+      partnerCompanyId: body.partnerCompanyId,
     });
   }
 
@@ -61,8 +71,12 @@ export class PartnerService {
       throw new NotFoundPartnerException();
     }
 
+    if (body.partnerCompanyId && (await this.partnerCompanyService.hasById(body.partnerCompanyId)) === false) {
+      throw new NotFoundPartnerCompanyException();
+    }
+
     await this.partnerRepository.update(id, {
-      name: toUndefinedOrNull(body.name),
+      name: toUndefined(toNull(body.name)),
       president: toUndefinedOrNull(body.president),
       contact: toUndefinedOrNull(body.contact),
       fax: toUndefinedOrNull(body.fax),
@@ -71,6 +85,7 @@ export class PartnerService {
       zipCode: toUndefinedOrNull(body.zipCode),
       address: toUndefinedOrNull(body.address),
       addressDetail: toUndefinedOrNull(body.addressDetail),
+      partnerCompanyId: toUndefined(toNull(body.partnerCompanyId)),
     });
   }
 
@@ -90,6 +105,9 @@ export class PartnerService {
   }
 
   async findById(id: number) {
-    return this.partnerRepository.findOneBy({ id });
+    return this.partnerRepository.findOne({
+      relations: { partnerCompany: true },
+      where: { id },
+    });
   }
 }

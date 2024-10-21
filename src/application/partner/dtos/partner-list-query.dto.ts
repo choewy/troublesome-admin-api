@@ -13,4 +13,9 @@ export class PartnerListQueryDTO extends ListQueryBuilder() {
   @IsString()
   @IsOptional()
   president?: string;
+
+  @ApiPropertyOptional({ type: String })
+  @IsString()
+  @IsOptional()
+  partnerCompanyName?: string;
 }
