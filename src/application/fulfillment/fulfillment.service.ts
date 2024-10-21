@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Like, Repository } from 'typeorm';
+import { DataSource, EntityManager, Like, Not, Repository } from 'typeorm';
 
 import { CreateFulfillmentDTO, FulfillmentDTO, FulfillmentListDTO, FulfillmentListQueryDTO, UpdateFulfillmentDTO } from './dtos';
 import { AlreadyExistPlantCodeException, NotFoundFulfillmentException } from './exceptions';
@@ -104,7 +104,7 @@ export class FulfillmentService {
       throw new NotFoundFulfillmentException();
     }
 
-    if (body.plantCode && (await this.hasByPlantCode(body.plantCode))) {
+    if (body.plantCode && (await this.hasByPlantCode(body.plantCode, id))) {
       throw new AlreadyExistPlantCodeException();
     }
 
@@ -158,10 +158,10 @@ export class FulfillmentService {
     }));
   }
 
-  async hasByPlantCode(plantCode: string) {
+  async hasByPlantCode(plantCode: string, omitId?: number) {
     return !!(await this.fulfillmentRepository.findOne({
       select: { id: true },
-      where: { plantCode },
+      where: { plantCode, id: omitId ? Not(omitId) : undefined },
     }));
   }
 

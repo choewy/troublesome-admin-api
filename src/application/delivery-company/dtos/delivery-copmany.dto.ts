@@ -12,9 +12,21 @@ export class DeliveryCompanyDTO {
   @ApiProperty({ type: String })
   alias: string;
 
+  @ApiProperty({ type: Boolean })
+  isActive: boolean;
+
+  @ApiProperty({ type: Date })
+  createdAt: Date;
+
+  @ApiProperty({ type: Date })
+  updatedAt: Date;
+
   constructor(deliveryCompany: DeliveryCompanyEntity) {
     this.id = deliveryCompany.id;
     this.name = deliveryCompany.name;
     this.alias = deliveryCompany.alias;
+    this.isActive = deliveryCompany.isActive;
+    this.createdAt = deliveryCompany.createdAt;
+    this.updatedAt = deliveryCompany.updatedAt;
   }
 }
