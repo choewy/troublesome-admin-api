@@ -3,7 +3,7 @@ import { IsOptional, IsString } from 'class-validator';
 
 import { ListQueryBuilder } from '@/common';
 
-export class FulfillmentCenterListQueryDTO extends ListQueryBuilder() {
+export class FulfillmentListQueryDTO extends ListQueryBuilder() {
   @ApiPropertyOptional({ type: String })
   @IsString()
   @IsOptional()

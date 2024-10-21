@@ -2,39 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Like, Repository } from 'typeorm';
 
-import {
-  CreateFulfillmentCenterDTO,
-  FulfillmentCenterDTO,
-  FulfillmentCenterListDTO,
-  FulfillmentCenterListQueryDTO,
-  UpdateFulfillmentCenterDTO,
-} from './dtos';
-import { AlreadyExistPlantCodeException, NotFoundFulfillmentCenterException } from './exceptions';
+import { CreateFulfillmentDTO, FulfillmentDTO, FulfillmentListDTO, FulfillmentListQueryDTO, UpdateFulfillmentDTO } from './dtos';
+import { AlreadyExistPlantCodeException, NotFoundFulfillmentException } from './exceptions';
 import { DeliveryCompanyService, NotFoundDeliveryCompanyException } from '../delivery-company';
 import { DeliveryCompanySettingService } from '../delivery-company-setting';
 import { FulfillmentCompanyService, NotFoundFulfillmentCompanyException } from '../fulfillment-company';
 
 import { toNull, toUndefined, toUndefinedOrNull } from '@/common';
-import { FulfillmentCenterEntity } from '@/libs';
+import { FulfillmentEntity } from '@/libs';
 
 @Injectable()
-export class FulfillmentCenterService {
+export class FulfillmentService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(FulfillmentCenterEntity)
-    private readonly fulfillmentCenterRepository: Repository<FulfillmentCenterEntity>,
+    @InjectRepository(FulfillmentEntity)
+    private readonly fulfillmentRepository: Repository<FulfillmentEntity>,
     private readonly fulfillmentCompanyService: FulfillmentCompanyService,
     private readonly deliveryCompanyService: DeliveryCompanyService,
     private readonly deliveryCompanySettingService: DeliveryCompanySettingService,
   ) {}
 
   getRepository(em?: EntityManager) {
-    return em ? em.getRepository(FulfillmentCenterEntity) : this.fulfillmentCenterRepository;
+    return em ? em.getRepository(FulfillmentEntity) : this.fulfillmentRepository;
   }
 
-  async getList(query: FulfillmentCenterListQueryDTO) {
-    return new FulfillmentCenterListDTO(
-      await this.fulfillmentCenterRepository.findAndCount({
+  async getList(query: FulfillmentListQueryDTO) {
+    return new FulfillmentListDTO(
+      await this.fulfillmentRepository.findAndCount({
         relations: {
           fulfillmentCompany: true,
           deliveryCompanySettings: { deliveryCompany: true },
@@ -54,16 +48,16 @@ export class FulfillmentCenterService {
   }
 
   async getById(id: number) {
-    const fulfillmentCenter = await this.findById(id);
+    const fulfillment = await this.findById(id);
 
-    if (fulfillmentCenter === null) {
-      throw new NotFoundFulfillmentCenterException();
+    if (fulfillment === null) {
+      throw new NotFoundFulfillmentException();
     }
 
-    return new FulfillmentCenterDTO(fulfillmentCenter);
+    return new FulfillmentDTO(fulfillment);
   }
 
-  async create(body: CreateFulfillmentCenterDTO) {
+  async create(body: CreateFulfillmentDTO) {
     if (await this.hasByPlantCode(body.plantCode)) {
       throw new AlreadyExistPlantCodeException();
     }
@@ -77,8 +71,8 @@ export class FulfillmentCenterService {
     }
 
     const transactional = async (em: EntityManager) => {
-      const fulfillmentCenterRepository = this.getRepository(em);
-      const fulfillmentCenter = fulfillmentCenterRepository.create({
+      const fulfillmentRepository = this.getRepository(em);
+      const fulfillment = fulfillmentRepository.create({
         name: body.name,
         plantCode: body.plantCode,
         consignerName: body.consignerName,
@@ -90,11 +84,11 @@ export class FulfillmentCenterService {
         fulfillmentCompanyId: body.fulfillmentCompanyId,
       });
 
-      await fulfillmentCenterRepository.insert(fulfillmentCenter);
+      await fulfillmentRepository.insert(fulfillment);
 
       const deliveryCompanySettingRepository = this.deliveryCompanySettingService.getRepository(em);
       const deliveryCompanySetting = deliveryCompanySettingRepository.create({
-        fulfillmentCenterId: fulfillmentCenter.id,
+        fulfillmentId: fulfillment.id,
         deliveryCompanyId: body.deliveryCompanyId,
         isDefault: true,
       });
@@ -105,9 +99,9 @@ export class FulfillmentCenterService {
     await this.dataSource.transaction(transactional);
   }
 
-  async updateById(id: number, body: UpdateFulfillmentCenterDTO) {
+  async updateById(id: number, body: UpdateFulfillmentDTO) {
     if ((await this.hasById(id)) === false) {
-      throw new NotFoundFulfillmentCenterException();
+      throw new NotFoundFulfillmentException();
     }
 
     if (body.plantCode && (await this.hasByPlantCode(body.plantCode))) {
@@ -123,8 +117,8 @@ export class FulfillmentCenterService {
     }
 
     const transactional = async (em: EntityManager) => {
-      const fulfillmentCenterRepository = this.getRepository(em);
-      await fulfillmentCenterRepository.update(id, {
+      const fulfillmentRepository = this.getRepository(em);
+      await fulfillmentRepository.update(id, {
         name: toUndefined(toNull(body.name)),
         plantCode: toUndefined(toNull(body.plantCode)),
         consignerName: toUndefinedOrNull(body.consignerName),
@@ -140,8 +134,8 @@ export class FulfillmentCenterService {
         const deliveryCompanySettingRepository = this.deliveryCompanySettingService.getRepository(em);
         await deliveryCompanySettingRepository.update(id, { isDefault: false });
         await deliveryCompanySettingRepository.upsert(
-          { fulfillmentCenterId: id, deliveryCompanyId: body.deliveryCompanyId, isDefault: true },
-          { conflictPaths: { fulfillmentCenterId: true, deliveryCompanyId: true } },
+          { fulfillmentId: id, deliveryCompanyId: body.deliveryCompanyId, isDefault: true },
+          { conflictPaths: { fulfillmentId: true, deliveryCompanyId: true } },
         );
       }
     };
@@ -151,28 +145,28 @@ export class FulfillmentCenterService {
 
   async deleteById(id: number) {
     if ((await this.hasById(id)) === false) {
-      throw new NotFoundFulfillmentCenterException();
+      throw new NotFoundFulfillmentException();
     }
 
-    await this.fulfillmentCenterRepository.softDelete(id);
+    await this.fulfillmentRepository.softDelete(id);
   }
 
   async hasById(id: number) {
-    return !!(await this.fulfillmentCenterRepository.findOne({
+    return !!(await this.fulfillmentRepository.findOne({
       select: { id: true },
       where: { id },
     }));
   }
 
   async hasByPlantCode(plantCode: string) {
-    return !!(await this.fulfillmentCenterRepository.findOne({
+    return !!(await this.fulfillmentRepository.findOne({
       select: { id: true },
       where: { plantCode },
     }));
   }
 
   async findById(id: number) {
-    return this.fulfillmentCenterRepository.findOne({
+    return this.fulfillmentRepository.findOne({
       relations: {
         fulfillmentCompany: true,
         deliveryCompanySettings: { deliveryCompany: true },

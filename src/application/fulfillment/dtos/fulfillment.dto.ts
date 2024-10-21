@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { DeliveryCompanyDTO } from '@/application/delivery-company';
 import { FulfillmentCompanyDTO } from '@/application/fulfillment-company';
-import { FulfillmentCenterEntity } from '@/libs';
+import { FulfillmentEntity } from '@/libs';
 
-export class FulfillmentCenterDTO {
+export class FulfillmentDTO {
   @ApiProperty({ type: Number })
   id: number;
 
@@ -44,22 +44,22 @@ export class FulfillmentCenterDTO {
   @ApiProperty({ type: DeliveryCompanyDTO })
   defaultDeliveryCompany: DeliveryCompanyDTO | null;
 
-  constructor(fulfillmentCenter: FulfillmentCenterEntity) {
-    this.id = fulfillmentCenter.id;
-    this.name = fulfillmentCenter.name;
-    this.plantCode = fulfillmentCenter.plantCode;
-    this.consignerName = fulfillmentCenter.consignerName ?? '';
-    this.consignerTel = fulfillmentCenter.consignerTel ?? '';
-    this.consignerPhone = fulfillmentCenter.consignerPhone ?? '';
-    this.zipCode = fulfillmentCenter.zipCode ?? '';
-    this.address = fulfillmentCenter.address ?? '';
-    this.addressDetail = fulfillmentCenter.addressDetail ?? '';
-    this.createdAt = fulfillmentCenter.createdAt;
-    this.updatedAt = fulfillmentCenter.updatedAt;
-    this.fulfillmentCompany = fulfillmentCenter.fulfillmentCompany ? new FulfillmentCompanyDTO(fulfillmentCenter.fulfillmentCompany) : null;
+  constructor(fulfillment: FulfillmentEntity) {
+    this.id = fulfillment.id;
+    this.name = fulfillment.name;
+    this.plantCode = fulfillment.plantCode;
+    this.consignerName = fulfillment.consignerName ?? '';
+    this.consignerTel = fulfillment.consignerTel ?? '';
+    this.consignerPhone = fulfillment.consignerPhone ?? '';
+    this.zipCode = fulfillment.zipCode ?? '';
+    this.address = fulfillment.address ?? '';
+    this.addressDetail = fulfillment.addressDetail ?? '';
+    this.createdAt = fulfillment.createdAt;
+    this.updatedAt = fulfillment.updatedAt;
+    this.fulfillmentCompany = fulfillment.fulfillmentCompany ? new FulfillmentCompanyDTO(fulfillment.fulfillmentCompany) : null;
 
     const defaultDeliveryCompany =
-      (fulfillmentCenter.deliveryCompanySettings ?? []).find(({ isDefault }) => isDefault === true)?.deliveryCompany ?? null;
+      (fulfillment.deliveryCompanySettings ?? []).find(({ isDefault }) => isDefault === true)?.deliveryCompany ?? null;
 
     this.defaultDeliveryCompany = defaultDeliveryCompany ? new DeliveryCompanyDTO(defaultDeliveryCompany) : null;
   }

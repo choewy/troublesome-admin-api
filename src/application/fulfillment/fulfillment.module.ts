@@ -1,23 +1,23 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FulfillmentCenterController } from './fulfillment-center.controller';
-import { FulfillmentCenterService } from './fulfillment-center.service';
+import { FulfillmentController } from './fulfillment.controller';
+import { FulfillmentService } from './fulfillment.service';
 import { DeliveryCompanyModule } from '../delivery-company';
 import { DeliveryCompanySettingModule } from '../delivery-company-setting';
 import { FulfillmentCompanyModule } from '../fulfillment-company';
 
-import { FulfillmentCenterEntity } from '@/libs';
+import { FulfillmentEntity } from '@/libs';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FulfillmentCenterEntity]),
+    TypeOrmModule.forFeature([FulfillmentEntity]),
     forwardRef(() => DeliveryCompanyModule),
     forwardRef(() => DeliveryCompanySettingModule),
     forwardRef(() => FulfillmentCompanyModule),
   ],
-  controllers: [FulfillmentCenterController],
-  providers: [FulfillmentCenterService],
-  exports: [FulfillmentCenterService],
+  controllers: [FulfillmentController],
+  providers: [FulfillmentService],
+  exports: [FulfillmentService],
 })
-export class FulfillmentCenterModule {}
+export class FulfillmentModule {}

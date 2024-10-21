@@ -13,7 +13,7 @@ import {
 
 import { PartnerEntity } from './partner.entity';
 import { createForeignKeyConstraintName } from '../helpers';
-import { FulfillmentCenterEntity } from './fulfillment-center.entity';
+import { FulfillmentEntity } from './fulfillment.entity';
 import { PermissionEntity } from './permission.entity';
 import { UserRolesEntity } from './user-roles.entity';
 
@@ -41,9 +41,9 @@ export class RoleEntity {
   @Column({ type: 'int', unsigned: true, nullable: true })
   fulfillmentCenterId: number | null;
 
-  @ManyToOne(() => FulfillmentCenterEntity, (e) => e.roles, { nullable: true, onDelete: 'CASCADE' })
-  @JoinColumn({ foreignKeyConstraintName: createForeignKeyConstraintName('role', 'fulfillment_center', 'id') })
-  fulfillmentCenter: FulfillmentCenterEntity | null;
+  @ManyToOne(() => FulfillmentEntity, (e) => e.roles, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ foreignKeyConstraintName: createForeignKeyConstraintName('role', 'fulfillment', 'id') })
+  fulfillment: FulfillmentEntity | null;
 
   @OneToMany(() => PermissionEntity, (e) => e.role, { cascade: true })
   @JoinTable()

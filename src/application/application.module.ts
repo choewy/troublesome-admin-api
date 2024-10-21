@@ -4,7 +4,7 @@ import { AdminModule } from './admin';
 import { AuthModule } from './auth';
 import { DeliveryCompanyModule } from './delivery-company';
 import { DeliveryCompanySettingModule } from './delivery-company-setting';
-import { FulfillmentCenterModule } from './fulfillment-center';
+import { FulfillmentModule } from './fulfillment';
 import { FulfillmentCompanyModule } from './fulfillment-company';
 import { HealthModule } from './health';
 import { PartnerModule } from './partner';
@@ -20,7 +20,7 @@ import { UserModule } from './user';
     DeliveryCompanyModule,
     DeliveryCompanySettingModule,
     FulfillmentCompanyModule,
-    FulfillmentCenterModule,
+    FulfillmentModule,
   ],
 })
 export class ApplicationModule {}
