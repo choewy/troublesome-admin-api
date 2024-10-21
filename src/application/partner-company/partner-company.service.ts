@@ -85,7 +85,11 @@ export class PartnerCompanyService {
       throw new NotFoundPartnerCompanyException();
     }
 
-    await this.partnerCompanyRepository.softDelete(id);
+    await this.partnerCompanyRepository.save({
+      id,
+      partners: [],
+      deletedAt: new Date(),
+    });
   }
 
   async hasById(id: number) {

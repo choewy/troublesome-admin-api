@@ -85,7 +85,11 @@ export class FulfillmentCompanyService {
       throw new NotFoundFulfillmentCompanyException();
     }
 
-    await this.fulfullmentCompanyRepository.softDelete(id);
+    await this.fulfullmentCompanyRepository.save({
+      id,
+      fulfillments: [],
+      deletedAt: new Date(),
+    });
   }
 
   async hasById(id: number) {
