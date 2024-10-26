@@ -9,7 +9,7 @@ import { ContextInterceptor } from './core';
 import { ExceptionFilter, SerializeInterceptor, Swagger, SwaggerDocumentOptions, ValidationPipe } from '@/bootstrap';
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const appConfigFactory = app.get(AppConfigFactory);
   const packageProfile = appConfigFactory.packageProfile;
 
