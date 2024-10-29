@@ -1,7 +1,7 @@
-CREATE DATABASE IF NOT EXISTS `local`;
-
 CREATE DATABASE IF NOT EXISTS `test`;
 
-GRANT ALL PRIVILEGES ON `local`.* TO 'troublesome' @'%';
+CREATE DATABASE IF NOT EXISTS `troublesome`;
 
 GRANT ALL PRIVILEGES ON `test`.* TO 'troublesome' @'%';
+
+GRANT ALL PRIVILEGES ON `troublesome`.* TO 'troublesome' @'%';
