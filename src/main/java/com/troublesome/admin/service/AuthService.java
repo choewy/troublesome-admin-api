@@ -18,15 +18,9 @@ public class AuthService {
 
   public JwtDTO login(LoginDTO loginDTO) {
     return this.adminRepository.findByEmail(loginDTO.getEmail())
-        .filter(entity -> this.validatePassword(entity.getPassword(), loginDTO.getPassword()))
+        .filter(entity -> entity.comparePassword(loginDTO.getPassword()))
         .map((entity) -> this.issueTokens(entity))
         .orElseThrow(() -> new ServiceException("Unauthorized", HttpStatus.UNAUTHORIZED));
-  }
-
-  private Boolean validatePassword(String adminPassword, String loginPassword) {
-    // TODO
-
-    return true;
   }
 
   private JwtDTO issueTokens(Admin admin) {

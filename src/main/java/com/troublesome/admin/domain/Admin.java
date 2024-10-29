@@ -5,28 +5,36 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity(name = "admin")
 @Comment(value = "관리자")
 public class Admin {
+  private static final BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", columnDefinition = "BIGINT UNSIGNED")
   @Comment(value = "관리자 PK")
   private Long id;
 
-  @Column(name = "email", length = 340)
+  @Column(name = "email", length = 340, unique = true)
   @Comment(value = "이메일")
   private String email;
 
@@ -41,7 +49,7 @@ public class Admin {
   @Column(name = "is_root", columnDefinition = "BOOLEAN")
   @ColumnDefault(value = "false")
   @Comment(value = "Root 관리자 여부")
-  private Boolean isRoot;
+  private boolean isRoot;
 
   @Column(name = "created_at", columnDefinition = "TIMESTAMP")
   @ColumnDefault(value = "CURRENT_TIMESTAMP")
@@ -57,4 +65,14 @@ public class Admin {
   @ColumnDefault(value = "NULL")
   @Comment(value = "삭제일시")
   private Timestamp deletedAt;
+
+  public Admin setPassword(String password) {
+    this.password = bcryptPasswordEncoder.encode(password);
+
+    return this;
+  }
+
+  public boolean comparePassword(String password) {
+    return bcryptPasswordEncoder.matches(password, this.password);
+  }
 }
