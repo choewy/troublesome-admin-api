@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "jwt.access.secret",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt.access.secret'"
+    },
+    {
+      "name": "jwt.refresh.secret",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt.refresh.secret'"
+    },
+    {
+      "name": "jwt.access.expiration-seconds",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt.access.expiration-seconds'"
+    },
+    {
+      "name": "jwt.refresh.expiration-seconds",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt.refresh.expiration-seconds'"
+    },
+    {
+      "name": "spring.application.domain",
+      "type": "java.lang.String",
+      "description": "A description for 'spring.application.domain'"
+    }
+  ]
+}

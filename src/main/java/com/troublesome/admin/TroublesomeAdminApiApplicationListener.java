@@ -7,13 +7,14 @@ import org.springframework.stereotype.Component;
 
 import com.troublesome.admin.domain.Admin;
 import com.troublesome.admin.repository.AdminRepository;
+import com.troublesome.admin.util.PasswordUtil;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Component
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class TroublesomeAdminApiApplicationListener implements ApplicationListener<ApplicationReadyEvent> {
+  final private PasswordUtil passwordUtil;
   final private AdminRepository adminRepository;
 
   @Override
@@ -25,9 +26,11 @@ public class TroublesomeAdminApiApplicationListener implements ApplicationListen
         .isRoot(true)
         .build();
 
-    this.adminRepository.findByEmail(admin.getEmail()).ifPresentOrElse((entity) -> {
+    this.adminRepository.findAdminByEmail(admin.getEmail()).ifPresentOrElse((entity) -> {
     }, () -> {
-      this.adminRepository.save(admin.setPassword("password"));
+      admin.setPassword(this.passwordUtil.encode("password"));
+
+      this.adminRepository.save(admin);
     });
   }
 }

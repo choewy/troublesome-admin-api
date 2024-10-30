@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,8 +25,6 @@ import lombok.Setter;
 @Entity(name = "admin")
 @Comment(value = "관리자")
 public class Admin {
-  private static final BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", columnDefinition = "BIGINT UNSIGNED")
@@ -65,14 +62,4 @@ public class Admin {
   @ColumnDefault(value = "NULL")
   @Comment(value = "삭제일시")
   private Timestamp deletedAt;
-
-  public Admin setPassword(String password) {
-    this.password = bcryptPasswordEncoder.encode(password);
-
-    return this;
-  }
-
-  public boolean comparePassword(String password) {
-    return bcryptPasswordEncoder.matches(password, this.password);
-  }
 }
