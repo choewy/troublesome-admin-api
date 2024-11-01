@@ -1,26 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ApplicationModule } from './application';
-import { ConfigFactoryModule, TypeOrmConfigFactory } from './common';
-import { ContextModule, ContextQueryLogger, LoggerModule } from './core';
+import * as services from './application/services';
+import { DatabaseModule } from './infrastructure';
+import * as controllers from './presentation/controllers';
 
 @Module({
-  imports: [
-    ConfigFactoryModule.forRoot(),
-    ContextModule.forRoot(),
-    LoggerModule.forRoot(),
-    TypeOrmModule.forRootAsync({
-      inject: [TypeOrmConfigFactory, ContextQueryLogger],
-      useFactory(configFactory: TypeOrmConfigFactory, contextQueryLogger: ContextQueryLogger) {
-        return configFactory.createTypeOrmModuleOptions(contextQueryLogger);
-      },
-    }),
-    ApplicationModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule],
+  controllers: Object.values(controllers),
+  providers: Object.values(services),
 })
 export class AppModule {}
