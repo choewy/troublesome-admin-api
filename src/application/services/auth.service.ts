@@ -5,7 +5,7 @@ import { JwtReturn, LoginInput } from '../interfaces';
 
 import { JwtService } from '@/common/jwt';
 import { PasswordService } from '@/common/password';
-import { JwtStorage, User, UserRepository, UserType } from '@/domain';
+import { JwtStorage, User, UserRepository } from '@/domain';
 
 @Injectable()
 export class AuthService {
@@ -18,10 +18,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(type: UserType, loginInput: LoginInput): Promise<JwtReturn> {
-    const user = await this.userRepository.findOneByTypeAndEmail(type, loginInput.email);
-
-    console.log(user);
+  async login(loginInput: LoginInput): Promise<JwtReturn> {
+    const user = await this.userRepository.findOneByTypeAndEmail(loginInput.type, loginInput.email);
 
     if (user === null || (await this.passwordService.compare(user.password, loginInput.password)) === false) {
       throw new InvalidEmailOrPasswordException();
