@@ -69,6 +69,10 @@ export class JwtService {
     return expiredAt.diff(issuedAt, 'seconds').get('seconds');
   }
 
+  getClaim<Payload extends jwt.JwtPayload>(token: string) {
+    return this.decodeToken(token) as Payload;
+  }
+
   private verifyToken<Payload extends jwt.JwtPayload>(token: string, secret: string, verifyOptions: jwt.VerifyOptions = {}) {
     const verifyResult = new JwtVerifyResult();
 

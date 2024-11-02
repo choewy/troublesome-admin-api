@@ -21,6 +21,8 @@ export class AuthService {
   async login(type: UserType, loginInput: LoginInput): Promise<JwtReturn> {
     const user = await this.userRepository.findOneByTypeAndEmail(type, loginInput.email);
 
+    console.log(user);
+
     if (user === null || (await this.passwordService.compare(user.password, loginInput.password)) === false) {
       throw new InvalidEmailOrPasswordException();
     }
@@ -28,19 +30,31 @@ export class AuthService {
     return this.issueTokens(user);
   }
 
+  async logout(accessToken: string) {
+    const claim = this.jwtService.getClaim<{ id: string }>(accessToken);
+
+    if (claim?.id == null) {
+      return;
+    }
+
+    return this.jwtStorage.removeTokens(claim.id);
+  }
+
   async issueTokens(user: User): Promise<JwtReturn> {
+    const userClaim = { id: user.id.value.toString(), type: user.type };
+
     let [accessToken, refreshToken] = await Promise.all([
-      this.jwtStorage.getAccessToken(user.id),
-      this.jwtStorage.getRefreshToken(user.id),
+      this.jwtStorage.getAccessToken(userClaim.id),
+      this.jwtStorage.getRefreshToken(userClaim.id),
     ]);
 
     if (!accessToken || !refreshToken) {
-      accessToken = this.jwtService.issueAccessToken({ id: user.id, type: user.type });
-      refreshToken = this.jwtService.issueRefreshToken({ id: user.id, type: user.type });
+      accessToken = this.jwtService.issueAccessToken(userClaim);
+      refreshToken = this.jwtService.issueRefreshToken(userClaim);
 
       await Promise.all([
-        this.jwtStorage.setAccessToken(user.id, accessToken, this.jwtService.getExpireSeconds(accessToken)),
-        this.jwtStorage.setRefreshToken(user.id, refreshToken, this.jwtService.getExpireSeconds(refreshToken)),
+        this.jwtStorage.setAccessToken(userClaim.id, accessToken, this.jwtService.getExpireSeconds(accessToken)),
+        this.jwtStorage.setRefreshToken(userClaim.id, refreshToken, this.jwtService.getExpireSeconds(refreshToken)),
       ]);
     }
 

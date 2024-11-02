@@ -1,8 +1,7 @@
-import { BigIntId } from '../vo';
-
 export interface JwtStorage {
-  getAccessToken(id: BigIntId): Promise<string | null>;
-  setAccessToken(id: BigIntId, token: string, seconds: number): Promise<void>;
-  getRefreshToken(id: BigIntId): Promise<string | null>;
-  setRefreshToken(id: BigIntId, token: string, seconds: number): Promise<void>;
+  getAccessToken(id: bigint | string): Promise<string | null>;
+  setAccessToken(id: bigint | string, token: string, seconds: number): Promise<void>;
+  getRefreshToken(id: bigint | string): Promise<string | null>;
+  setRefreshToken(id: bigint | string, token: string, seconds: number): Promise<void>;
+  removeTokens(id: bigint | string): Promise<void>;
 }

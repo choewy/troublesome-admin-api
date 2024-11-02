@@ -27,6 +27,6 @@ export enum ConfigKey {
 }
 
 export enum RequestHeader {
-  AccessToken = 'access-token',
+  AccessToken = 'Authorization',
   RefreshToken = 'refresh-token',
 }
