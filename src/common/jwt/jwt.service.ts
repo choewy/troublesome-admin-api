@@ -42,18 +42,18 @@ export class JwtService {
     });
   }
 
-  verifyAccessToken(token: string) {
-    const verifyResult = this.verifyToken(token, this.accessTokenSecret);
+  verifyAccessToken<Payload extends jwt.JwtPayload>(token: string) {
+    const verifyResult = this.verifyToken<Payload>(token, this.accessTokenSecret);
 
     if (verifyResult.expired) {
-      return this.verifyToken(token, this.accessTokenSecret, { ignoreExpiration: true });
+      return this.verifyToken<Payload>(token, this.accessTokenSecret, { ignoreExpiration: true });
     }
 
     return verifyResult;
   }
 
-  verifyRefreshToken(token: string) {
-    return this.verifyToken(token, this.refreshTokenSecret);
+  verifyRefreshToken<Payload extends jwt.JwtPayload>(token: string) {
+    return this.verifyToken<Payload>(token, this.refreshTokenSecret);
   }
 
   private issueToken(payload: string | object | Buffer, secret: string, signOptions: jwt.SignOptions = {}) {
@@ -74,7 +74,7 @@ export class JwtService {
   }
 
   private verifyToken<Payload extends jwt.JwtPayload>(token: string, secret: string, verifyOptions: jwt.VerifyOptions = {}) {
-    const verifyResult = new JwtVerifyResult();
+    const verifyResult = new JwtVerifyResult<Payload>();
 
     try {
       verifyResult.payload = jwt.verify(token, secret, verifyOptions) as Payload;

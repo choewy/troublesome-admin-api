@@ -5,6 +5,7 @@ import { AppService } from './application/services';
 import { Swagger, SwaggerDocumentOptions } from './common/swagger';
 import { isLocal } from './constant';
 import { ExceptionFilter } from './presentation/filters';
+import { JwtGuard } from './presentation/guards';
 import { SerializeInterceptor } from './presentation/interceptors';
 import { ValidationPipe } from './presentation/pipes';
 
@@ -31,6 +32,7 @@ const bootstrap = async () => {
   app.useGlobalInterceptors(new SerializeInterceptor(app.get(Reflector)));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new ExceptionFilter());
+  app.useGlobalGuards(app.get(JwtGuard));
 
   await app.listen(port, host);
 };

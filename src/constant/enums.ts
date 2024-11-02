@@ -30,3 +30,12 @@ export enum RequestHeader {
   AccessToken = 'Authorization',
   RefreshToken = 'refresh-token',
 }
+
+export enum ResponseHeader {
+  AccessToken = 'x-access-token',
+  RefreshToken = 'x-refresh-token',
+}
+
+export enum MetadataKey {
+  Public = 'public',
+}

@@ -6,9 +6,10 @@ import { Request } from 'express';
 import { JwtDTO, LoginDTO } from '../dto';
 
 import { AuthService } from '@/application/services';
-import { RequestHeader } from '@/constant';
+import { Public, RequestHeader } from '@/constant';
 import { UserType } from '@/domain';
 
+@Public()
 @ApiTags('인증')
 @Controller('auth')
 export class AuthController {
@@ -25,8 +26,7 @@ export class AuthController {
   @ApiBearerAuth(RequestHeader.AccessToken)
   @ApiOperation({ summary: '로그아웃 API' })
   async logout(@Req() req: Request) {
-    const bearerAuth = req.headers.authorization ?? '';
-    const accessToken = bearerAuth.replace('Bearer ', '');
+    const accessToken = (req.headers.authorization ?? '').replace('Bearer ', '');
 
     return this.authService.logout(accessToken);
   }
