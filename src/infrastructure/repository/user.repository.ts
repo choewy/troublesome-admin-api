@@ -3,11 +3,11 @@ import { EntityManager } from 'typeorm';
 
 import { IRepositoryImpl } from '../abstracts';
 
-import { Member, MemberRepository } from '@/domain';
+import { User, UserRepository } from '@/domain';
 
 @Injectable()
-export class MemberRepositoryImpl extends IRepositoryImpl<Member> implements MemberRepository {
+export class UserRepositoryImpl extends IRepositoryImpl<User> implements UserRepository {
   constructor(entityManager: EntityManager) {
-    super(Member, entityManager);
+    super(User, entityManager);
   }
 }

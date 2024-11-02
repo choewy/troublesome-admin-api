@@ -1,7 +1,7 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app.module';
-import { AppService } from './application';
+import { AppService } from './application/services';
 import { Swagger, SwaggerDocumentOptions } from './common/swagger';
 import { isLocal } from './constant';
 import { ExceptionFilter } from './presentation/filters';

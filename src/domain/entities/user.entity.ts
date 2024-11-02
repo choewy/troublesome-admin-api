@@ -1,19 +1,23 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
+import { UserType } from '../enums';
 import { BigIntValueTransformer } from '../transformers';
 import { BigIntId } from '../vo';
 
-@Entity({ name: 'member', comment: '구성원' })
-export class Member {
+@Entity({ name: 'user', comment: '사용자' })
+export class User {
   @Column({
     primary: true,
     type: 'bigint',
     unsigned: true,
     generated: 'increment',
     transformer: new BigIntValueTransformer(),
-    comment: '관리자 PK',
+    comment: '사용자 PK',
   })
   readonly id: BigIntId;
+
+  @Column({ type: 'varchar', length: 10, default: UserType.Member, comment: '구분' })
+  type: UserType;
 
   @Column({ type: 'varchar', length: 340, comment: '이메일' })
   email: string;
