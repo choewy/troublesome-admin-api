@@ -21,6 +21,9 @@ export enum ConfigKey {
   DatabaseDatabase = 'DB_DATABASE',
   DatabaseSynchronize = 'DB_SYNCHRONIZE',
   DatabaseLogging = 'DB_LOGGING',
+  RedisHost = 'REDIS_HOST',
+  RedisPort = 'REDIS_PORT',
+  RedisDatabase = 'REDIS_DB',
 }
 
 export enum RequestHeader {

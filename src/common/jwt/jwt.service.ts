@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
+import { DateTime } from 'luxon';
 
 import { JwtVerifyResult } from './jwt-verify-result';
 
@@ -29,7 +30,7 @@ export class JwtService {
     return this.issueToken(payload, this.accessTokenSecret, {
       issuer: this.issuer,
       subject: this.accessTokenSubject,
-      expiresIn: '1d',
+      expiresIn: '30m',
     });
   }
 
@@ -59,6 +60,15 @@ export class JwtService {
     return jwt.sign(payload, secret, signOptions);
   }
 
+  getExpireSeconds(token: string) {
+    const claim = this.decodeToken(token) as jwt.JwtPayload;
+
+    const issuedAt = DateTime.fromJSDate(new Date(claim.iat * 1000));
+    const expiredAt = DateTime.fromJSDate(new Date(claim.exp * 1000));
+
+    return expiredAt.diff(issuedAt, 'seconds').get('seconds');
+  }
+
   private verifyToken<Payload extends jwt.JwtPayload>(token: string, secret: string, verifyOptions: jwt.VerifyOptions = {}) {
     const verifyResult = new JwtVerifyResult();
 
@@ -72,5 +82,9 @@ export class JwtService {
     }
 
     return verifyResult;
+  }
+
+  private decodeToken(token: string) {
+    return jwt.decode(token) as jwt.JwtPayload;
   }
 }
