@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken';
 
 import { JwtVerifyResult } from './jwt-verify-result';
 
-import { getEnv } from '@/constant';
+import { ConfigKey, getEnv } from '@/constant';
 
 @Injectable()
 export class JwtService {
@@ -15,9 +15,12 @@ export class JwtService {
   private readonly refershTokenSubject: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.issuer = [this.configService.get('npm_package_name'), this.configService.get('npm_package_version'), getEnv()].join(':');
-    this.accessTokenSecret = this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET');
-    this.refreshTokenSecret = this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET');
+    const npmPackageName = this.configService.get(ConfigKey.NpmPackageName);
+    const npmPackageVersion = this.configService.get(ConfigKey.NpmPackageVersion);
+
+    this.issuer = [npmPackageName, npmPackageVersion, getEnv()].join(':');
+    this.accessTokenSecret = this.configService.getOrThrow(ConfigKey.JwtAccessTokenSecret);
+    this.refreshTokenSecret = this.configService.getOrThrow(ConfigKey.JwtRefreshTokenSecret);
     this.accessTokenSubject = [this.issuer, 'access'].join(':');
     this.refershTokenSubject = [this.issuer, 'refersh'].join(':');
   }

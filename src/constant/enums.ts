@@ -5,6 +5,24 @@ export enum NodeEnv {
   Test = 'test',
 }
 
+export enum ConfigKey {
+  NpmPackageName = 'npm_package_name',
+  NpmPackageVersion = 'npm_package_version',
+  Host = 'HOST',
+  Port = 'PORT',
+  Domain = 'DOMAIN',
+  CorsOrigin = 'CORS_ORIGIN',
+  JwtAccessTokenSecret = 'JWT_ACCESS_TOKEN_SECRET',
+  JwtRefreshTokenSecret = 'JWT_REFRESH_TOKEN_SECRET',
+  DatabaseHost = 'DB_HOST',
+  DatabasePort = 'DB_PORT',
+  DatabaseUsername = 'DB_USERNAME',
+  DatabasePassword = 'DB_PASSWORD',
+  DatabaseDatabase = 'DB_DATABASE',
+  DatabaseSynchronize = 'DB_SYNCHRONIZE',
+  DatabaseLogging = 'DB_LOGGING',
+}
+
 export enum RequestHeader {
   AccessToken = 'access-token',
   RefreshToken = 'refresh-token',

@@ -7,22 +7,24 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { DatabaseConnectionName } from './enums';
 import * as defaultRepositories from '../repository';
 
+import { ConfigKey } from '@/constant';
+
 export const DataBaseDefaultProvider: TypeOrmModuleAsyncOptions = {
   inject: [ConfigService],
   name: DatabaseConnectionName.Default,
   useFactory(configService: ConfigService) {
     return {
       type: 'mysql',
-      host: configService.getOrThrow('DB_HOST'),
-      port: +configService.getOrThrow('DB_PORT'),
-      username: configService.getOrThrow('DB_USERNAME'),
-      password: configService.getOrThrow('DB_PASSWORD'),
-      database: configService.getOrThrow('DB_DATABASE'),
+      host: configService.getOrThrow(ConfigKey.DatabaseHost),
+      port: +configService.getOrThrow(ConfigKey.DatabasePort),
+      username: configService.getOrThrow(ConfigKey.DatabaseUsername),
+      password: configService.getOrThrow(ConfigKey.DatabasePassword),
+      database: configService.getOrThrow(ConfigKey.DatabaseDatabase),
       namingStrategy: new SnakeNamingStrategy(),
-      synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
-      logging: ['true', 'false'].includes(configService.get('DB_LOGGING'))
-        ? configService.get('DB_LOGGING') === 'true'
-        : configService.get('DB_LOGGING').split('|'),
+      synchronize: configService.get(ConfigKey.DatabaseSynchronize) === 'true',
+      logging: ['true', 'false'].includes(configService.get(ConfigKey.DatabaseLogging))
+        ? configService.get(ConfigKey.DatabaseLogging) === 'true'
+        : configService.get(ConfigKey.DatabaseLogging).split('|'),
       entities: [`${process.cwd()}/dist/domain/entities/**/*.entity.{ts,js}`],
     };
   },

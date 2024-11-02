@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { ConfigService } from '@nestjs/config';
 
-import { getEnv } from '@/constant';
+import { ConfigKey, getEnv } from '@/constant';
 
 @Injectable()
 export class AppService {
@@ -12,22 +12,22 @@ export class AppService {
 
   public get packageProfile() {
     return {
-      name: this.configService.get('npm_package_name'),
-      version: this.configService.get('npm_package_version'),
+      name: this.configService.get(ConfigKey.NpmPackageName),
+      version: this.configService.get(ConfigKey.NpmPackageVersion),
       env: getEnv(),
     };
   }
 
   public get listenOptions(): ListenOptions {
     return {
-      host: this.configService.getOrThrow('HOST'),
-      port: +this.configService.getOrThrow('PORT'),
+      host: this.configService.getOrThrow(ConfigKey.Host),
+      port: +this.configService.getOrThrow(ConfigKey.Port),
     };
   }
 
   public get corsOptions(): CorsOptions {
     return {
-      origin: new RegExp(this.configService.getOrThrow('CORS_ORIGIN')),
+      origin: new RegExp(this.configService.getOrThrow(ConfigKey.CorsOrigin)),
       preflightContinue: false,
       credentials: false,
     };
