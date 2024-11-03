@@ -1,116 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
-import { verify } from 'argon2';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { LoginDTO, TokensDTO, UpdatePasswordDTO } from './dtos';
-import { InvalidAdminException, InvalidEmailOrPasswordException, WrongPasswordException } from './exceptions';
-import { AdminService } from '../admin';
-import { JwtCustomPayload, JwtVerifyResult } from './implements';
+import { AuthStorage } from './auth.storage';
+import { LoginDTO } from './dto/login.dto';
+import { TokensDTO } from './dto/tokens.dto';
+import { UserTokenClaimType } from '../user/types';
+import { User } from '../user/user.entity';
+import { UserService } from '../user/user.service';
 
-import { JwtConfigFactory } from '@/common';
-import { ContextService } from '@/core';
+import { JwtService } from '@/common/jwt/jwt.service';
+import { PasswordService } from '@/common/password/password.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly adminService: AdminService,
+    private readonly passwordService: PasswordService,
     private readonly jwtService: JwtService,
-    private readonly jwtConfigFactory: JwtConfigFactory,
-    private readonly contextService: ContextService,
+    private readonly userService: UserService,
+    private readonly authStorage: AuthStorage,
   ) {}
 
   async login(body: LoginDTO) {
-    const admin = await this.adminService.findByEmail(body.email);
+    const user = await this.userService.getUserByTypeAndEmail(body.type, body.email);
 
-    if (admin === null) {
-      throw new InvalidEmailOrPasswordException();
+    if (user === null || (await this.passwordService.compare(user.password, body.password)) === false) {
+      throw new UnauthorizedException();
     }
 
-    if ((await verify(admin.password, body.password)) === false) {
-      throw new InvalidEmailOrPasswordException();
-    }
+    return this.issueTokens(user);
+  }
 
-    const tokens = this.issueTokens(admin);
+  async logout(accessToken: string) {
+    const userClaim = this.jwtService.getClaim<UserTokenClaimType>(accessToken);
+
+    if (userClaim?.id) {
+      await this.authStorage.removeTokens(userClaim.id);
+    }
+  }
+
+  async issueTokens(user: User) {
+    let tokens = await this.authStorage.getTokens(user.id);
+
+    if (tokens === null) {
+      tokens = this.jwtService.issueTokens(user.toClaim());
+
+      await this.authStorage.setTokens(
+        user.id,
+        tokens.accessToken,
+        tokens.refreshToken,
+        this.jwtService.getExpireSeconds(tokens.accessToken),
+        this.jwtService.getExpireSeconds(tokens.refreshToken),
+      );
+    }
 
     return new TokensDTO(tokens.accessToken, tokens.refreshToken);
   }
 
-  async updatePassword(body: UpdatePasswordDTO) {
-    const requestUser = this.contextService.getRequestUser();
-    const admin = await this.adminService.findById(requestUser.id);
+  async validateTokens(accessToken: string, refreshToken: string) {
+    const accessTokenResult = this.jwtService.verifyAccessToken<UserTokenClaimType>(accessToken);
+    const refreshTokenResult = this.jwtService.verifyRefreshToken<UserTokenClaimType>(refreshToken);
 
-    if (await verify(admin.password, body.currentPassword)) {
-      throw new WrongPasswordException();
+    if (accessTokenResult.ok === false) {
+      throw new UnauthorizedException();
     }
 
-    await this.adminService.updateById(admin.id, {
-      password: body.newPassword,
-      confirmPassword: body.confirmPassword,
-    });
-  }
-
-  issueTokens(payload: JwtCustomPayload) {
-    return {
-      accessToken: this.issueAccessToken(payload),
-      refreshToken: this.issueRefreshToken(payload),
-    };
-  }
-
-  issueAccessToken(payload: JwtCustomPayload) {
-    return this.jwtService.sign({ id: payload.id }, this.jwtConfigFactory.getAccessTokenSignOptions());
-  }
-
-  issueRefreshToken(payload: JwtCustomPayload) {
-    return this.jwtService.sign({ id: payload.id }, this.jwtConfigFactory.getRefreshTokenSignOptions());
-  }
-
-  validateJwtPayload(payload: JwtCustomPayload) {
-    if (typeof payload.id === 'number') {
-      return payload;
+    if (accessTokenResult.expired === true && refreshTokenResult.ok === false) {
+      throw new UnauthorizedException();
     }
 
-    throw new JsonWebTokenError('invalid jwt token payload');
-  }
+    const user = await this.userService.getUserById(accessTokenResult.payload.id);
 
-  verifyAccessToken(accessToken: string, error: unknown = null): JwtVerifyResult {
-    const expired = error instanceof TokenExpiredError;
-    const verifyResult = new JwtVerifyResult(error);
-
-    if (error && expired === false) {
-      return verifyResult;
+    if (user === null) {
+      throw new UnauthorizedException();
     }
 
-    const options = this.jwtConfigFactory.getAccessTokenVerifyOptions(verifyResult.expired);
-
-    try {
-      const payload = this.validateJwtPayload(this.jwtService.verify(accessToken, options));
-
-      return verifyResult.setPayload(payload);
-    } catch (e) {
-      return this.verifyAccessToken(accessToken, e);
-    }
-  }
-
-  verifyRefreshToken(refreshToken: string): JwtVerifyResult {
-    const options = this.jwtConfigFactory.getRefreshTokenVerifyOptions();
-    const verifyResult = new JwtVerifyResult();
-
-    try {
-      const payload = this.validateJwtPayload(this.jwtService.verify(refreshToken, options));
-
-      return verifyResult.setPayload(payload);
-    } catch (e) {
-      return verifyResult.setError(e);
-    }
-  }
-
-  async setRequestUserContext(id: number) {
-    const admin = await this.adminService.findById(id);
-
-    if (admin === null) {
-      throw new InvalidAdminException();
-    }
-
-    this.contextService.setRequestUser(admin);
+    return { user, expired: accessTokenResult.expired };
   }
 }

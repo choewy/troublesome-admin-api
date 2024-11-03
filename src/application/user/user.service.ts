@@ -1,34 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { UserDTO } from './dtos';
-import { NotFoundUserException } from './exceptions';
-
-import { UserEntity } from '@/libs';
+import { UserType } from './enums';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-  ) {}
+  private readonly userRepository: Repository<User>;
 
-  getRepository(em?: EntityManager) {
-    return em ? em.getRepository(UserEntity) : this.userRepository;
+  constructor(private readonly dataSource: DataSource) {
+    this.userRepository = dataSource.getRepository(User);
   }
 
-  async findById(id: number) {
-    return this.userRepository.findOneBy({ id });
+  async getUserByTypeAndEmail(type: UserType, email: string) {
+    return this.userRepository.findOne({ where: { type, email } });
   }
 
-  async getById(id: number) {
-    const user = await this.findById(id);
-
-    if (user === null) {
-      throw new NotFoundUserException();
-    }
-
-    return new UserDTO(user);
+  async getUserById(id: string) {
+    return this.userRepository.findOne({ where: { id } });
   }
 }

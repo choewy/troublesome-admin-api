@@ -1,30 +1,36 @@
-import { Body, Controller, HttpCode, HttpStatus, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 import { AuthService } from './auth.service';
-import { LoginDTO, TokensDTO, UpdatePasswordDTO } from './dtos';
+import { LoginDTO } from './dto/login.dto';
+import { TokensDTO } from './dto/tokens.dto';
 
-import { Private, Public } from '@/common';
+import { ApiCutomHeaders } from '@/common/swagger/decorators';
+import { Public } from '@/constant/decorators';
+import { RequestHeader } from '@/constant/enums';
 
-@ApiTags('인증/인가')
+@Public()
+@ApiTags('인증')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @Public()
-  @ApiOperation({ summary: '로그인' })
+  @ApiOperation({ summary: '로그인 API' })
   @ApiCreatedResponse({ type: TokensDTO })
   async login(@Body() body: LoginDTO) {
     return this.authService.login(body);
   }
 
-  @Patch('password')
+  @Delete('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Private()
-  @ApiOperation({ summary: '비밀번호 변경' })
+  @ApiOperation({ summary: '로그아웃 API' })
+  @ApiCutomHeaders()
   @ApiNoContentResponse()
-  async updatePassword(@Body() body: UpdatePasswordDTO) {
-    return this.authService.updatePassword(body);
+  async logout(@Req() request: Request) {
+    const accessToken = (request.headers[RequestHeader.AccessToken] ?? '').replace('Bearer ', '');
+
+    return this.authService.logout(accessToken);
   }
 }

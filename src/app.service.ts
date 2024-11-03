@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-
-import { AppConfigFactory } from '@/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly appConfigFactory: AppConfigFactory) {}
+  constructor(private readonly configService: ConfigService) {}
 
-  public getPackageProfile() {
-    return this.appConfigFactory.packageProfile;
+  public getAppProfile() {
+    return {
+      name: this.configService.get('npm_package_name'),
+      version: this.configService.get('npm_package_version'),
+    };
   }
 }
