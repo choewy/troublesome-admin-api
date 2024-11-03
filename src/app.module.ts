@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import * as services from './application/services';
-import * as usecases from './application/usecases';
-import { JwtModule } from './common/jwt';
-import { PasswordModule } from './common/password';
-import { DatabaseModule, RedisModule } from './infrastructure';
-import * as controllers from './presentation/controllers';
-import * as guards from './presentation/guards';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './application/auth/auth.module';
+import { UserModule } from './application/user/user.module';
+import { ContextModule } from './common/context/context.module';
+import { DatabaseModule } from './common/database/database.module';
+import { RedisModule } from './common/redis/redis.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, RedisModule, JwtModule, PasswordModule],
-  controllers: [].concat(Object.values(controllers)),
-  providers: [].concat(Object.values(services)).concat(Object.values(usecases)).concat(Object.values(guards)),
+  imports: [ConfigModule.forRoot({ isGlobal: true }), ContextModule, DatabaseModule, RedisModule, UserModule, AuthModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

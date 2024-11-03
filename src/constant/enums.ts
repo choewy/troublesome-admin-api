@@ -27,15 +27,17 @@ export enum ConfigKey {
 }
 
 export enum RequestHeader {
-  AccessToken = 'Authorization',
+  RequestId = 'x-request-id',
+  AccessToken = 'authorization',
   RefreshToken = 'refresh-token',
 }
 
 export enum ResponseHeader {
-  AccessToken = 'x-access-token',
-  RefreshToken = 'x-refresh-token',
+  RequestId = 'X-REQUEST-ID',
+  AccessToken = 'X-ACCESS-TOKEN',
+  RefreshToken = 'X-REFRESH-TOKEN',
 }
 
 export enum MetadataKey {
-  Public = 'public',
+  IsPublic = 'is-public',
 }

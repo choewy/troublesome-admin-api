@@ -5,7 +5,8 @@ import { DateTime } from 'luxon';
 
 import { JwtVerifyResult } from './jwt-verify-result';
 
-import { ConfigKey, getEnv } from '@/constant';
+import { ConfigKey } from '@/constant/enums';
+import { getEnv } from '@/constant/helpers';
 
 @Injectable()
 export class JwtService {
@@ -24,6 +25,13 @@ export class JwtService {
     this.refreshTokenSecret = this.configService.getOrThrow(ConfigKey.JwtRefreshTokenSecret);
     this.accessTokenSubject = [this.issuer, 'access'].join(':');
     this.refershTokenSubject = [this.issuer, 'refersh'].join(':');
+  }
+
+  issueTokens(payload: string | object | Buffer) {
+    return {
+      accessToken: this.issueAccessToken(payload),
+      refreshToken: this.issueRefreshToken(payload),
+    };
   }
 
   issueAccessToken(payload: string | object | Buffer) {
