@@ -1,16 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Transport } from '@nestjs/microservices';
-import {
-  DiskHealthIndicator,
-  HealthCheckService,
-  MemoryHealthIndicator,
-  TypeOrmHealthIndicator,
-  MicroserviceHealthIndicator,
-} from '@nestjs/terminus';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { DiskHealthIndicator, HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
 
-import { RedisService } from '@/common/redis/redis.service';
+import { DatabaseHealthIndicator } from '@/common/database/database-health.indicator';
+import { RedisHealthIndicator } from '@/common/redis/redis-health.indicator';
 
 @Injectable()
 export class HealthService {
@@ -18,11 +10,8 @@ export class HealthService {
     private healthCheckService: HealthCheckService,
     private memoryIndicator: MemoryHealthIndicator,
     private diskHealthIndicator: DiskHealthIndicator,
-    private typeOrmHealthIndicator: TypeOrmHealthIndicator,
-    @InjectDataSource()
-    private defaultDataSource: DataSource,
-    private microServiceIndicator: MicroserviceHealthIndicator,
-    private redisService: RedisService,
+    private databaseHealthIndicator: DatabaseHealthIndicator,
+    private redisHealthIndicator: RedisHealthIndicator,
   ) {}
 
   async healthCheck() {
@@ -31,8 +20,8 @@ export class HealthService {
         () => this.memoryIndicator.checkHeap('memory_heap', 150 * 1024 * 1024),
         () => this.memoryIndicator.checkRSS('memory_rss', 150 * 1024 * 1024),
         () => this.diskHealthIndicator.checkStorage('disk', { path: '/', threshold: 250 * 1024 * 1024 * 1024 }),
-        () => this.typeOrmHealthIndicator.pingCheck('database', { connection: this.defaultDataSource }),
-        () => this.microServiceIndicator.pingCheck('redis', { transport: Transport.REDIS, options: this.redisService.redisOptions }),
+        () => this.databaseHealthIndicator.pingCheck(),
+        () => this.redisHealthIndicator.pickCheck(),
       ])
       .then((res) => res.details)
       .catch((e) => {

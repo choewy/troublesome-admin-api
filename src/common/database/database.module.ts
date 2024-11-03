@@ -1,10 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { TypeOrmHealthIndicator } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
+import { DatabaseHealthIndicator } from './database-health.indicator';
+
 import { ConfigKey } from '@/constant/enums';
 
+@Global()
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -27,5 +31,7 @@ import { ConfigKey } from '@/constant/enums';
       },
     }),
   ],
+  providers: [TypeOrmHealthIndicator, DatabaseHealthIndicator],
+  exports: [DatabaseHealthIndicator],
 })
 export class DatabaseModule {}
