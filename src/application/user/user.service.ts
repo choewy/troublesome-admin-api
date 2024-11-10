@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, FindOptionsWhere, Like, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { GetUserListParamsDTO } from './dto/get-user-list-param.dto';
 import { UserListDTO } from './dto/user-list.dto';
-import { UserType } from './enums';
+import { UserSearchKeywordField, UserType } from './enums';
 import { User } from './user.entity';
 
 @Injectable()
@@ -22,28 +22,48 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async getUsersAndCount(params: GetUserListParamsDTO) {
-    const where: FindOptionsWhere<User>[] = [];
+  private createUserSearchKeywordBracket(field: UserSearchKeywordField, keyword: string) {
+    return new Brackets((qb) => {
+      qb.where('1 = 1');
 
-    if (params.email) {
-      where.push({ email: Like(`%${params.email}%`) });
-    }
+      switch (field) {
+        case UserSearchKeywordField.Email:
+          qb.orWhere('user.email LIKE "%:keyword%"', { keyword });
 
-    if (params.name) {
-      where.push({ name: Like(`%${params.name}%`) });
-    }
+          break;
 
-    for (const w of where) {
-      if (params.type) {
-        w.type = params.type;
+        case UserSearchKeywordField.Name:
+          qb.orWhere('user.name LIKE "%:keyword%"', { keyword });
+
+          break;
+
+        default:
+          qb.orWhere('user.email LIKE "%:keyword%"', { keyword });
+          qb.orWhere('user.name LIKE "%:keyword%"', { keyword });
+
+          break;
       }
+
+      return qb;
+    });
+  }
+
+  async getUserList(params: GetUserListParamsDTO) {
+    const builder = this.userRepository.createQueryBuilder('user').where('1 = 1');
+
+    if (params.type) {
+      builder.andWhere('user.type = :type', { type: params.type });
     }
 
-    const [users, total] = await this.userRepository.findAndCount({
-      where,
-      skip: params.skip,
-      take: params.take,
-    });
+    if (params.status) {
+      builder.andWhere('user.status = :status', { status: params.status });
+    }
+
+    if (params.keyword) {
+      builder.andWhere(this.createUserSearchKeywordBracket(params.field, params.keyword));
+    }
+
+    const [users, total] = await builder.skip(params.skip).take(params.take).getManyAndCount();
 
     return new UserListDTO(users, total, params);
   }

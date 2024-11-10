@@ -1,20 +1,26 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
-import { UserType } from '../enums';
+import { UserSearchKeywordField, UserStatus, UserType } from '../enums';
 
 import { ListParam } from '@/common/builder/list-param';
 
 export class GetUserListParamsDTO extends ListParam {
   @ApiPropertyOptional({ type: String, enum: UserType })
   @IsOptional()
+  @IsEnum(UserType)
   type?: UserType;
 
-  @ApiPropertyOptional({ type: String })
+  @ApiPropertyOptional({ type: String, enum: UserStatus })
   @IsOptional()
-  name?: string;
+  @IsEnum(UserStatus)
+  status?: UserStatus;
+
+  @ApiPropertyOptional({ type: String, enum: UserSearchKeywordField })
+  @IsOptional()
+  field?: UserSearchKeywordField;
 
   @ApiPropertyOptional({ type: String })
   @IsOptional()
-  email?: string;
+  keyword?: string;
 }
