@@ -3,7 +3,7 @@ import { ApiResponseProperty } from '@nestjs/swagger';
 
 import { ListParam } from './list-param';
 
-export const ListResponseBuilder = <DTO, Entity>(DtoClass: Type<DTO>) => {
+export const ListResponseBuilder = <Entity, DTO = any>(DtoClass: Type<DTO>) => {
   class ListResponse {
     @ApiResponseProperty({ type: Number })
     total: number;
