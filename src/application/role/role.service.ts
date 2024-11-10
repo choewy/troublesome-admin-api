@@ -5,6 +5,8 @@ import { CreateRoleDTO } from './dto/create-role.dto';
 import { GetRoleListParamDTO } from './dto/get-role-list-param.dto';
 import { RoleExistByNameResultDTO } from './dto/role-exist-by-name-result.dto';
 import { RoleListDTO } from './dto/role-list.dto';
+import { UpdateRolePermissionsDTO } from './dto/update-role-permissions.dto';
+import { UpdateRoleUsersDTO } from './dto/update-role-users.dto';
 import { UpdateRoleDTO } from './dto/update-role.dto';
 import { RoleSearchKeywordField } from './enums';
 import { RolePermission } from './role-permission.entity';
@@ -83,11 +85,55 @@ export class RoleService {
       if (body.name && body.name !== role.name) {
         await roleRepository.update(body.id, { name: body.name });
       }
+    });
+  }
 
-      if (Array.isArray(body.permissions)) {
-        const rolePermissionRepository = em.getRepository(RolePermission);
-        await rolePermissionRepository.delete({ roleId: role.id });
-        await rolePermissionRepository.insert(body.permissions.map((key) => ({ key, role })));
+  async updateRolePermissions(body: UpdateRolePermissionsDTO) {
+    await this.dataSource.transaction(async (em) => {
+      const roleRepository = em.getRepository(Role);
+      const role = await roleRepository.findOne({
+        relations: { permissions: true },
+        where: { id: body.id },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (role === null) {
+        return;
+      }
+
+      const rolePermissionRepository = em.getRepository(RolePermission);
+
+      if (Array.isArray(body.remove) && body.remove.length > 0) {
+        await rolePermissionRepository.delete({ role, key: In(body.remove) });
+      }
+
+      if (Array.isArray(body.append) && body.append.length > 9) {
+        await rolePermissionRepository.insert(body.append.map((key) => ({ key, role })));
+      }
+    });
+  }
+
+  async updateRoleUsers(body: UpdateRoleUsersDTO) {
+    await this.dataSource.transaction(async (em) => {
+      const roleRepository = em.getRepository(Role);
+      const role = await roleRepository.findOne({
+        relations: { permissions: true },
+        where: { id: body.id },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (role === null) {
+        return;
+      }
+
+      const roleUsersRepository = em.getRepository(RoleUsers);
+
+      if (Array.isArray(body.remove) && body.remove.length > 0) {
+        await roleUsersRepository.delete({ role, userId: In(body.remove) });
+      }
+
+      if (Array.isArray(body.append) && body.append.length > 0) {
+        await roleUsersRepository.insert(body.append.map((userId) => ({ role, userId })));
       }
     });
   }

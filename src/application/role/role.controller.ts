@@ -7,6 +7,8 @@ import { DeleteRoleDTO } from './dto/delete-role.dto';
 import { DeleteRolesDTO } from './dto/delete-roles.dto';
 import { GetRoleListParamDTO } from './dto/get-role-list-param.dto';
 import { RoleListDTO } from './dto/role-list.dto';
+import { UpdateRolePermissionsDTO } from './dto/update-role-permissions.dto';
+import { UpdateRoleUsersDTO } from './dto/update-role-users.dto';
 import { UpdateRoleDTO } from './dto/update-role.dto';
 import { RoleService } from './role.service';
 
@@ -46,6 +48,22 @@ export class RoleController {
   @ApiNoContentResponse()
   async updateRole(@Body() body: UpdateRoleDTO) {
     return this.roleService.updateRole(body);
+  }
+
+  @Put('update/permissions')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '역할 권한 수정' })
+  @ApiNoContentResponse()
+  async updateRolePermissions(@Body() body: UpdateRolePermissionsDTO) {
+    return this.roleService.updateRolePermissions(body);
+  }
+
+  @Put('update/users')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '역할 사용자 수정' })
+  @ApiNoContentResponse()
+  async updateRoleUsers(@Body() body: UpdateRoleUsersDTO) {
+    return this.roleService.updateRoleUsers(body);
   }
 
   @Put('delete')

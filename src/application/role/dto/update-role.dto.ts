@@ -1,7 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsEnum, IsNotEmpty, IsNumberString, IsOptional } from 'class-validator';
-
-import { RolePermissionKey } from '../enums';
+import { IsNotEmpty, IsNumberString, IsOptional } from 'class-validator';
 
 import { ToString } from '@/constant/transformers';
 
@@ -15,10 +13,4 @@ export class UpdateRoleDTO {
   @ApiPropertyOptional({ type: String })
   @IsOptional()
   name?: string;
-
-  @ApiPropertyOptional({ type: [String], enum: RolePermissionKey })
-  @IsEnum(RolePermissionKey, { each: true })
-  @IsArray()
-  @IsOptional()
-  permissions: RolePermissionKey[];
 }
