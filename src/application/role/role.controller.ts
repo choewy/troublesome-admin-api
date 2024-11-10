@@ -12,16 +12,18 @@ import { RoleListDTO } from './dto/role-list.dto';
 import { UpdateRolePermissionsDTO } from './dto/update-role-permissions.dto';
 import { UpdateRoleUsersDTO } from './dto/update-role-users.dto';
 import { UpdateRoleDTO } from './dto/update-role.dto';
+import { RolePermissionKey } from './enums';
 import { RoleService } from './role.service';
 
-import { Public } from '@/constant/decorators';
+import { Permission, Private } from '@/constant/decorators';
 
-@Public()
+@Private()
 @ApiTags('역할')
 @Controller('roles')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
+  @Permission(RolePermissionKey.RoleList)
   @Get('list')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '역할 목록 검색 조회' })
@@ -30,6 +32,7 @@ export class RoleController {
     return this.roleService.getRoleList(queryParam);
   }
 
+  @Permission(RolePermissionKey.RoleRead)
   @Get('exist')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '역할명 존재 여부 확인' })
@@ -37,6 +40,7 @@ export class RoleController {
     return this.roleService.checkExistRoleByName(queryParam.name);
   }
 
+  @Permission(RolePermissionKey.RoleRead)
   @Get('detail/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '역할 조회' })
@@ -45,6 +49,7 @@ export class RoleController {
     return this.roleService.getRoleDetail(param.id);
   }
 
+  @Permission(RolePermissionKey.RoleCreate)
   @Post('create')
   @ApiOperation({ summary: '역할 생성' })
   @ApiCreatedResponse()
@@ -52,6 +57,7 @@ export class RoleController {
     return this.roleService.createRole(body);
   }
 
+  @Permission(RolePermissionKey.RoleUpdate)
   @Patch('update')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '역할 수정' })
@@ -60,6 +66,7 @@ export class RoleController {
     return this.roleService.updateRole(body);
   }
 
+  @Permission(RolePermissionKey.RolePermissionUpdate)
   @Put('update/permissions')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '역할 권한 수정' })
@@ -68,6 +75,7 @@ export class RoleController {
     return this.roleService.updateRolePermissions(body);
   }
 
+  @Permission(RolePermissionKey.RoleUserUpdate)
   @Put('update/users')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '역할 사용자 수정' })
@@ -76,6 +84,7 @@ export class RoleController {
     return this.roleService.updateRoleUsers(body);
   }
 
+  @Permission(RolePermissionKey.RoleDelete)
   @Put('delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '역할 삭제' })
@@ -84,6 +93,7 @@ export class RoleController {
     return this.roleService.deleteRoles([body.id]);
   }
 
+  @Permission(RolePermissionKey.RoleDelete)
   @Put('delete/many')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '역할 삭제' })

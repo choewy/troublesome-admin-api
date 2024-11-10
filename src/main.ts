@@ -3,6 +3,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { JwtGuard } from './application/auth/guard/jwt.guard';
+import { RoleGuard } from './application/role/guard/role.guard';
 import { ContextInterceptor } from './common/context/context.interceptor';
 import { ExceptionFilter } from './common/providers/exception.filter';
 import { SerializeInterceptor } from './common/providers/serialize.interceptor';
@@ -23,7 +24,7 @@ const bootstrap = async () => {
 
   app.enableShutdownHooks();
   app.enableCors({ origin });
-  app.useGlobalGuards(app.get(JwtGuard));
+  app.useGlobalGuards(app.get(JwtGuard), app.get(RoleGuard));
   app.useGlobalInterceptors(new SerializeInterceptor(reflector), app.get(ContextInterceptor));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new ExceptionFilter());

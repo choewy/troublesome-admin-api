@@ -14,12 +14,13 @@ export class UserService {
     this.userRepository = this.dataSource.getRepository(User);
   }
 
-  async getUserByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
-  }
-
-  async getUserById(id: string) {
-    return this.userRepository.findOne({ where: { id } });
+  private get userQueryBuilder() {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndMapMany('user.roleJoin', 'user.roleJoin', 'roleJoin')
+      .leftJoinAndMapOne('roleJoin.role', 'roleJoin.role', 'role')
+      .leftJoinAndMapMany('role.permissions', 'role.permissions', 'permissions')
+      .where('1 = 1');
   }
 
   private createUserSearchKeywordBracket(field: UserSearchKeywordField, keyword: string) {
@@ -48,13 +49,16 @@ export class UserService {
     });
   }
 
+  async getUserByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  async getUserById(id: string) {
+    return this.userQueryBuilder.andWhere('user.id = :id', { id }).getOne();
+  }
+
   async getUserList(params: GetUserListParamsDTO) {
-    const builder = this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndMapMany('user.roleJoin', 'user.roleJoin', 'roleJoin')
-      .leftJoinAndMapOne('roleJoin.role', 'roleJoin.role', 'role')
-      .leftJoinAndMapMany('role.permissions', 'role.permissions', 'permissions')
-      .where('1 = 1');
+    const builder = this.userQueryBuilder;
 
     if (params.type) {
       builder.andWhere('user.type = :type', { type: params.type });

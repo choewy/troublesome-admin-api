@@ -40,4 +40,5 @@ export enum ResponseHeader {
 
 export enum MetadataKey {
   IsPublic = 'is-public',
+  Permission = 'permission',
 }

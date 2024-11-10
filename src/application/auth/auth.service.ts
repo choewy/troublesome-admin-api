@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { AuthStorage } from './auth.storage';
 import { LoginDTO } from './dto/login.dto';
 import { TokensDTO } from './dto/tokens.dto';
+import { UserStatus } from '../user/enums';
 import { UserTokenClaimType } from '../user/types';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
@@ -71,6 +72,10 @@ export class AuthService {
 
     if (user === null) {
       throw new UnauthorizedException();
+    }
+
+    if (user.status !== UserStatus.Activated) {
+      throw new ForbiddenException();
     }
 
     return { user, expired: accessTokenResult.expired };

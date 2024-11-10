@@ -6,8 +6,7 @@ import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
 import { TokensDTO } from './dto/tokens.dto';
 
-import { ApiCutomHeaders } from '@/common/swagger/decorators';
-import { Public } from '@/constant/decorators';
+import { Private, Public } from '@/constant/decorators';
 import { RequestHeader } from '@/constant/enums';
 
 @Public()
@@ -23,10 +22,10 @@ export class AuthController {
     return this.authService.login(body);
   }
 
+  @Private()
   @Delete('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '로그아웃 API' })
-  @ApiCutomHeaders()
   @ApiNoContentResponse()
   async logout(@Req() request: Request) {
     const accessToken = (request.headers[RequestHeader.AccessToken] ?? '').replace('Bearer ', '');

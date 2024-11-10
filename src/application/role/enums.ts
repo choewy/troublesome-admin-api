@@ -7,6 +7,8 @@ export enum RolePermissionKey {
   RoleRead = 'role.read',
   RoleCreate = 'role.create',
   RoleUpdate = 'role.update',
+  RoleUserUpdate = 'role.user.update',
+  RolePermissionUpdate = 'role.permission.update',
   RoleDelete = 'role.delete',
 }
 
