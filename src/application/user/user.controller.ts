@@ -5,9 +5,6 @@ import { GetUserListParamsDTO } from './dto/get-user-list-param.dto';
 import { UserListDTO } from './dto/user-list.dto';
 import { UserService } from './user.service';
 
-import { Public } from '@/constant/decorators';
-
-@Public()
 @ApiTags('사용자')
 @Controller('users')
 export class UserController {

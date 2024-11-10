@@ -3,7 +3,7 @@ import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { GetUserListParamsDTO } from './dto/get-user-list-param.dto';
 import { UserListDTO } from './dto/user-list.dto';
-import { UserSearchKeywordField, UserType } from './enums';
+import { UserSearchKeywordField } from './enums';
 import { User } from './user.entity';
 
 @Injectable()
@@ -14,8 +14,8 @@ export class UserService {
     this.userRepository = dataSource.getRepository(User);
   }
 
-  async getUserByTypeAndEmail(type: UserType, email: string) {
-    return this.userRepository.findOne({ where: { type, email } });
+  async getUserByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async getUserById(id: string) {

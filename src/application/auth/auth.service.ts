@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
 
   async login(body: LoginDTO) {
-    const user = await this.userService.getUserByTypeAndEmail(body.type, body.email);
+    const user = await this.userService.getUserByEmail(body.email);
 
     if (user === null || (await this.passwordService.compare(user.password, body.password)) === false) {
       throw new UnauthorizedException();
