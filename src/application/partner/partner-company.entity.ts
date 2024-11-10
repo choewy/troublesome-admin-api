@@ -9,27 +9,19 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RolePermission } from './role-permission.entity';
-import { RoleUsers } from './role-users.entity';
+import { Partner } from './partner.entity';
 
-@Entity({ name: 'role', comment: '역할' })
-export class Role {
-  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true, comment: '역할 PK' })
+@Entity({ name: 'partner_group', comment: '고객사 그룹' })
+export class PartnerGroup {
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true, comment: '고객사 그룹 PK' })
   readonly id: string;
 
   @Column({ type: 'varchar', length: 50, comment: '이름' })
   name: string;
 
-  @Column({ type: 'boolean', default: true, comment: '수정가능여부' })
-  editable: boolean;
-
-  @OneToMany(() => RolePermission, (e) => e.role, { cascade: true })
+  @OneToMany(() => Partner, (e) => e.partnerGroup, { cascade: true })
   @JoinTable()
-  permissions: RolePermission[];
-
-  @OneToMany(() => RoleUsers, (e) => e.role, { cascade: true })
-  @JoinTable()
-  userJoin: RoleUsers[];
+  partners: Partner[];
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;

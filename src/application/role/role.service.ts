@@ -93,7 +93,7 @@ export class RoleService {
         lock: { mode: 'pessimistic_write' },
       });
 
-      if (role === null) {
+      if (role === null || role.editable === false) {
         return;
       }
 
@@ -112,7 +112,7 @@ export class RoleService {
         lock: { mode: 'pessimistic_write' },
       });
 
-      if (role === null) {
+      if (role === null || role.editable === false) {
         return;
       }
 
@@ -137,7 +137,7 @@ export class RoleService {
         lock: { mode: 'pessimistic_write' },
       });
 
-      if (role === null) {
+      if (role === null || role.editable === false) {
         return;
       }
 
@@ -156,13 +156,22 @@ export class RoleService {
   async deleteRoles(ids: string[]) {
     await this.dataSource.transaction(async (em) => {
       const roleRepository = em.getRepository(Role);
-      await roleRepository.softDelete({ id: In(['0'].concat(ids)) });
+      const roles = await roleRepository.find({
+        select: { id: true },
+        where: {
+          id: In(['0'].concat(ids)),
+          editable: true,
+        },
+      });
+
+      const roleIds = ['0'].concat(roles.map(({ id }) => id));
+      await roleRepository.softDelete({ id: In(roleIds) });
 
       const rolePermissionRepository = em.getRepository(RolePermission);
-      await rolePermissionRepository.delete({ roleId: In(['0'].concat(ids)) });
+      await rolePermissionRepository.delete({ roleId: In(roleIds) });
 
       const roleUsersRepository = em.getRepository(RoleUsers);
-      await roleUsersRepository.delete({ roleId: In(['0'].concat(ids)) });
+      await roleUsersRepository.delete({ roleId: In(roleIds) });
     });
   }
 }

@@ -6,11 +6,16 @@ import { UserListDTO } from './dto/user-list.dto';
 import { UserSearchKeywordField } from './enums';
 import { User } from './user.entity';
 
+import { PasswordService } from '@/common/password/password.service';
+
 @Injectable()
 export class UserService {
   private readonly userRepository: Repository<User>;
 
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly passwordService: PasswordService,
+  ) {
     this.userRepository = this.dataSource.getRepository(User);
   }
 
