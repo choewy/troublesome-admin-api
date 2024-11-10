@@ -5,12 +5,15 @@ import { GetUserListParamsDTO } from './dto/get-user-list-param.dto';
 import { UserListDTO } from './dto/user-list.dto';
 import { UserService } from './user.service';
 
+import { Public } from '@/constant/decorators';
+
+@Public()
 @ApiTags('사용자')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('list')
   @ApiOperation({ summary: '사용자 목록 검색 조회' })
   @ApiOkResponse({ type: UserListDTO })
   async getUserList(@Query() queryParams: GetUserListParamsDTO) {

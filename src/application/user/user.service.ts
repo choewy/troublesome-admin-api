@@ -49,7 +49,12 @@ export class UserService {
   }
 
   async getUserList(params: GetUserListParamsDTO) {
-    const builder = this.userRepository.createQueryBuilder('user').where('1 = 1');
+    const builder = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndMapMany('user.roleJoin', 'user.roleJoin', 'roleJoin')
+      .leftJoinAndMapOne('roleJoin.role', 'roleJoin.role', 'role')
+      .leftJoinAndMapMany('role.permissions', 'role.permissions', 'permissions')
+      .where('1 = 1');
 
     if (params.type) {
       builder.andWhere('user.type = :type', { type: params.type });

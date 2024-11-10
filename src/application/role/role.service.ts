@@ -8,6 +8,7 @@ import { RoleListDTO } from './dto/role-list.dto';
 import { UpdateRoleDTO } from './dto/update-role.dto';
 import { RoleSearchKeywordField } from './enums';
 import { RolePermission } from './role-permission.entity';
+import { RoleUsers } from './role-users.entity';
 import { Role } from './role.entity';
 
 @Injectable()
@@ -42,6 +43,8 @@ export class RoleService {
     const builder = this.roleRepository
       .createQueryBuilder('role')
       .leftJoinAndMapMany('role.permissions', 'role.permissions', 'permissions')
+      .leftJoinAndMapMany('role.userJoin', 'role.userJoin', 'userJoin')
+      .leftJoinAndMapOne('userJoin.user', 'userJoin.user', 'user')
       .where('1 = 1');
 
     if (params.keyword) {
@@ -90,6 +93,15 @@ export class RoleService {
   }
 
   async deleteRoles(ids: string[]) {
-    await this.roleRepository.softDelete({ id: In(['0'].concat(ids)) });
+    await this.dataSource.transaction(async (em) => {
+      const roleRepository = em.getRepository(Role);
+      await roleRepository.softDelete({ id: In(['0'].concat(ids)) });
+
+      const rolePermissionRepository = em.getRepository(RolePermission);
+      await rolePermissionRepository.delete({ roleId: In(['0'].concat(ids)) });
+
+      const roleUsersRepository = em.getRepository(RoleUsers);
+      await roleUsersRepository.delete({ roleId: In(['0'].concat(ids)) });
+    });
   }
 }

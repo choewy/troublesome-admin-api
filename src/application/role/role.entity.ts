@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { RolePermission } from './role-permission.entity';
+import { RoleUsers } from './role-users.entity';
 
 @Entity({ name: 'role', comment: '역할' })
 export class Role {
@@ -22,6 +23,10 @@ export class Role {
   @OneToMany(() => RolePermission, (e) => e.role, { cascade: true })
   @JoinTable()
   permissions: RolePermission[];
+
+  @OneToMany(() => RoleUsers, (e) => e.role, { cascade: true })
+  @JoinTable()
+  userJoin: RoleUsers[];
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;

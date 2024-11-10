@@ -10,12 +10,15 @@ import { RoleListDTO } from './dto/role-list.dto';
 import { UpdateRoleDTO } from './dto/update-role.dto';
 import { RoleService } from './role.service';
 
+import { Public } from '@/constant/decorators';
+
+@Public()
 @ApiTags('역할')
 @Controller('roles')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @Get('search')
+  @Get('list')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '역할 목록 검색 조회' })
   @ApiOkResponse({ type: RoleListDTO })

@@ -1,7 +1,17 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinTable,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { UserStatus, UserType } from './enums';
 import { UserTokenClaimType } from './types';
+import { RoleUsers } from '../role/role-users.entity';
 
 @Entity({ name: 'user', comment: '사용자' })
 export class User {
@@ -22,6 +32,10 @@ export class User {
 
   @Column({ type: 'varchar', length: 10, default: UserStatus.Activated, comment: '상태' })
   status: UserStatus;
+
+  @OneToMany(() => RoleUsers, (e) => e.user, { cascade: true })
+  @JoinTable()
+  roleJoin: RoleUsers[];
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;
