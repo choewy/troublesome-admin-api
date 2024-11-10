@@ -11,7 +11,7 @@ export class UserService {
   private readonly userRepository: Repository<User>;
 
   constructor(private readonly dataSource: DataSource) {
-    this.userRepository = dataSource.getRepository(User);
+    this.userRepository = this.dataSource.getRepository(User);
   }
 
   async getUserByEmail(email: string) {

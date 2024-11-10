@@ -21,7 +21,7 @@ export class Role {
 
   @OneToMany(() => RolePermission, (e) => e.role, { cascade: true })
   @JoinTable()
-  permisisons: RolePermission[];
+  permissions: RolePermission[];
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;

@@ -14,7 +14,7 @@ export class RolePermission {
   @Column({ type: 'bigint', unsigned: true })
   roleId: string;
 
-  @ManyToOne(() => Role, (e) => e.permisisons, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Role, (e) => e.permissions, { onDelete: 'CASCADE' })
   role: Role;
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })

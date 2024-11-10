@@ -22,7 +22,7 @@ export class RoleDTO {
   constructor(role: Role) {
     this.id = role.id;
     this.name = role.name;
-    this.permissions = role.permisisons.map(({ key }) => key);
+    this.permissions = role.permissions.map(({ key }) => key);
     this.createdAt = role.createdAt;
     this.updatedAt = role.updatedAt;
   }
