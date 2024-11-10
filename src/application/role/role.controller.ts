@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CheckExistRoleByNameParamDTO } from './dto/check-exist-role-by-name-param.dto';
@@ -6,6 +6,8 @@ import { CreateRoleDTO } from './dto/create-role.dto';
 import { DeleteRoleDTO } from './dto/delete-role.dto';
 import { DeleteRolesDTO } from './dto/delete-roles.dto';
 import { GetRoleListParamDTO } from './dto/get-role-list-param.dto';
+import { GetRoleParamDTO } from './dto/get-role-param.dto';
+import { RoleDetailDTO } from './dto/role-detail.dto';
 import { RoleListDTO } from './dto/role-list.dto';
 import { UpdateRolePermissionsDTO } from './dto/update-role-permissions.dto';
 import { UpdateRoleUsersDTO } from './dto/update-role-users.dto';
@@ -33,6 +35,14 @@ export class RoleController {
   @ApiOperation({ summary: '역할명 존재 여부 확인' })
   async checkExistRoleByName(@Query() queryParam: CheckExistRoleByNameParamDTO) {
     return this.roleService.checkExistRoleByName(queryParam.name);
+  }
+
+  @Get('detail/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: '역할 조회' })
+  @ApiOkResponse({ type: RoleDetailDTO })
+  async getRoleDetail(@Param() param: GetRoleParamDTO) {
+    return this.roleService.getRoleDetail(param.id);
   }
 
   @Post('create')
