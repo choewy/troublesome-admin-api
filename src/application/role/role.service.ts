@@ -90,7 +90,6 @@ export class RoleService {
       const role = await roleRepository.findOne({
         relations: { permissions: true },
         where: { id: body.id },
-        lock: { mode: 'pessimistic_write' },
       });
 
       if (role === null || role.editable === false) {
@@ -109,7 +108,6 @@ export class RoleService {
       const role = await roleRepository.findOne({
         relations: { permissions: true },
         where: { id: body.id },
-        lock: { mode: 'pessimistic_write' },
       });
 
       if (role === null || role.editable === false) {
@@ -134,7 +132,6 @@ export class RoleService {
       const role = await roleRepository.findOne({
         relations: { permissions: true },
         where: { id: body.id },
-        lock: { mode: 'pessimistic_write' },
       });
 
       if (role === null || role.editable === false) {
