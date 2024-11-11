@@ -1,10 +1,17 @@
-import { Controller, Get, HttpCode, HttpStatus, Patch, Post, Put, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { PartnerService } from './partner.service';
 import { RolePermissionKey } from '../role/enums';
 import { CheckExistPartnerGroupByNameParamDTO } from './dto/check-exist-partner-group-by-name-param.dto';
+import { GetPartnerGroupListParamDTO } from './dto/get-partner-group-list-param.dto';
+import { GetPartnerGroupParamDTO } from './dto/get-partner-group-param.dto';
+import { GetPartnerListParamDTO } from './dto/get-partner-list-param.dto';
+import { GetPartnerParamDTO } from './dto/get-partner-param.dto';
 import { PartnerGroupExistByNameResultDTO } from './dto/partner-group-exist-by-name-result.dto';
+import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
+import { PartnerListDTO } from './dto/partner-list.dto';
+import { PartnerDTO } from './dto/patner.dto';
 
 import { Permission, Public } from '@/constant/decorators';
 
@@ -17,17 +24,17 @@ export class PartnerController {
   @Permission(RolePermissionKey.PartnerList)
   @Get('list')
   @ApiOperation({ summary: '고객사 목록 검색 조회' })
-  @ApiOkResponse()
-  async getPartnerList() {
-    return;
+  @ApiOkResponse({ type: PartnerListDTO })
+  async getPartnerList(@Query() queryParam: GetPartnerListParamDTO) {
+    return this.partnerService.getPartnerList(queryParam);
   }
 
   @Permission(RolePermissionKey.PartnerRead)
   @Get('detail/:id')
   @ApiOperation({ summary: '고객사 조회' })
-  @ApiOkResponse()
-  async getPartnerDetail() {
-    return;
+  @ApiOkResponse({ type: PartnerDTO })
+  async getPartnerDetail(@Param() param: GetPartnerParamDTO) {
+    return param;
   }
 
   @Permission(RolePermissionKey.PartnerCreate)
@@ -77,9 +84,9 @@ export class PartnerController {
   @Permission(RolePermissionKey.PartnerGroupList)
   @Get('groups/list')
   @ApiOperation({ summary: '고객사 그룹 목록 검색 조회' })
-  @ApiOkResponse()
-  async getPartnerGroupList() {
-    return;
+  @ApiOkResponse({ type: PartnerGroupListDTO })
+  async getPartnerGroupList(@Query() queryParam: GetPartnerGroupListParamDTO) {
+    return this.partnerService.getPartnerGroupList(queryParam);
   }
 
   @Permission(RolePermissionKey.PartnerRead)
@@ -94,8 +101,8 @@ export class PartnerController {
   @Get('groups/detail/:id')
   @ApiOperation({ summary: '고객사 그룹 조회' })
   @ApiOkResponse()
-  async getPartnerGroupDetail() {
-    return;
+  async getPartnerGroupDetail(@Param() param: GetPartnerGroupParamDTO) {
+    return param;
   }
 
   @Permission(RolePermissionKey.PartnerGroupCreate)

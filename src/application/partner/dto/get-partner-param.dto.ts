@@ -3,7 +3,7 @@ import { IsNotEmpty, IsNumberString } from 'class-validator';
 
 import { ToString } from '@/constant/transformers';
 
-export class GetRoleParamDTO {
+export class GetPartnerParamDTO {
   @ApiProperty({ type: BigInt })
   @IsNumberString()
   @IsNotEmpty()
