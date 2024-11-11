@@ -8,6 +8,7 @@ import { DeleteRolesDTO } from './dto/delete-roles.dto';
 import { GetRoleListParamDTO } from './dto/get-role-list-param.dto';
 import { GetRoleParamDTO } from './dto/get-role-param.dto';
 import { RoleDetailDTO } from './dto/role-detail.dto';
+import { RoleExistByNameResultDTO } from './dto/role-exist-by-name-result.dto';
 import { RoleListDTO } from './dto/role-list.dto';
 import { UpdateRolePermissionsDTO } from './dto/update-role-permissions.dto';
 import { UpdateRoleUsersDTO } from './dto/update-role-users.dto';
@@ -25,7 +26,6 @@ export class RoleController {
 
   @Permission(RolePermissionKey.RoleList)
   @Get('list')
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '역할 목록 검색 조회' })
   @ApiOkResponse({ type: RoleListDTO })
   async getRoleList(@Query() queryParam: GetRoleListParamDTO) {
@@ -34,15 +34,14 @@ export class RoleController {
 
   @Permission(RolePermissionKey.RoleRead)
   @Get('exist')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '역할명 존재 여부 확인' })
+  @ApiOperation({ summary: '역할명 중복 여부 확인' })
+  @ApiOkResponse({ type: RoleExistByNameResultDTO })
   async checkExistRoleByName(@Query() queryParam: CheckExistRoleByNameParamDTO) {
     return this.roleService.checkExistRoleByName(queryParam.name);
   }
 
   @Permission(RolePermissionKey.RoleRead)
   @Get('detail/:id')
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '역할 조회' })
   @ApiOkResponse({ type: RoleDetailDTO })
   async getRoleDetail(@Param() param: GetRoleParamDTO) {
@@ -69,7 +68,7 @@ export class RoleController {
   @Permission(RolePermissionKey.RolePermissionUpdate)
   @Put('update/permissions')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: '역할 권한 수정' })
+  @ApiOperation({ summary: '역할 권한 추가/삭제' })
   @ApiNoContentResponse()
   async updateRolePermissions(@Body() body: UpdateRolePermissionsDTO) {
     return this.roleService.updateRolePermissions(body);
@@ -78,7 +77,7 @@ export class RoleController {
   @Permission(RolePermissionKey.RoleUserUpdate)
   @Put('update/users')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: '역할 사용자 수정' })
+  @ApiOperation({ summary: '역할 사용자 추가/삭제' })
   @ApiNoContentResponse()
   async updateRoleUsers(@Body() body: UpdateRoleUsersDTO) {
     return this.roleService.updateRoleUsers(body);

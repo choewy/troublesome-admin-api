@@ -8,7 +8,7 @@ export class RolePermission {
   @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true, comment: '역할 권한 PK' })
   readonly id: string;
 
-  @Column({ type: 'varchar', length: 30, comment: '역할 권한 키' })
+  @Column({ type: 'varchar', length: 50, comment: '역할 권한 키' })
   key: RolePermissionKey;
 
   @Column({ type: 'bigint', unsigned: true })

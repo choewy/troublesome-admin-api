@@ -1,6 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-export class RoleExistByNameResultDTO {
+export class PartnerGroupExistByNameResultDTO {
   @ApiResponseProperty({ type: String })
   name: string;
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 
+import { PartnerGroupExistByNameResultDTO } from './dto/partner-group-exist-by-name-result.dto';
 import { PartnerGroup } from './partner-company.entity';
 import { Partner } from './partner.entity';
 
@@ -15,6 +16,10 @@ export class PartnerService {
   }
 
   async getPartnerGroupList() {}
+
+  async checkExistPartnerGroupByName(name: string) {
+    return new PartnerGroupExistByNameResultDTO(name, (await this.partnerGroupRepository.countBy({ name })) > 0);
+  }
 
   async getPartnerList() {}
 }
