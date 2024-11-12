@@ -128,7 +128,7 @@ export class FulfillmentController {
 
   @Permission(RolePermissionKey.FulfillmentGroupCreate)
   @Post('groups/create')
-  @ApiOperation({ summary: '고객사 그룹 생성' })
+  @ApiOperation({ summary: '풀필먼트 그룹 생성' })
   @ApiCreatedResponse()
   async createFulfillmentGroup(@Body() body: CreateFulfillmentGroupDTO) {
     return this.fulfillmentSerivce.createFulfillmentGroup(body);
@@ -137,7 +137,7 @@ export class FulfillmentController {
   @Permission(RolePermissionKey.FulfillmentGroupUpdate)
   @Patch('groups/update')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: '고객사 그룹 수정' })
+  @ApiOperation({ summary: '풀필먼트 그룹 수정' })
   @ApiNoContentResponse()
   async updateFulfillmentGroup(@Body() body: UpdateFulfillmentGroupDTO) {
     return this.fulfillmentSerivce.updateFulfillmentGroup(body);

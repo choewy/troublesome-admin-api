@@ -2,6 +2,7 @@ import { ApiResponseProperty } from '@nestjs/swagger';
 
 import { User } from '../user.entity';
 
+import { FulfillmentDTO } from '@/application/fulfillment/dto/fulfillment.dto';
 import { PartnerDTO } from '@/application/partner/dto/patner.dto';
 import { RoleDTO } from '@/application/role/dto/role.dto';
 
@@ -21,6 +22,9 @@ export class UserDTO {
   @ApiResponseProperty({ type: PartnerDTO })
   partner: PartnerDTO | null;
 
+  @ApiResponseProperty({ type: FulfillmentDTO })
+  fulfillment: FulfillmentDTO | null;
+
   @ApiResponseProperty({ type: Date })
   createdAt: Date;
 
@@ -37,6 +41,7 @@ export class UserDTO {
     }
 
     this.partner = user.partner ? new PartnerDTO(user.partner) : null;
+    this.fulfillment = user.fulfillment ? new FulfillmentDTO(user.fulfillment) : null;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;
   }

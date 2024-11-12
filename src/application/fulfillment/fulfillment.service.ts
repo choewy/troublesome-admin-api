@@ -33,7 +33,7 @@ export class FulfillmentService {
   private get fulfillmentGroupQueryBuilder() {
     return this.fulfillmentGroupRepository
       .createQueryBuilder('fulfillmentGroup')
-      .leftJoinAndMapMany('fulfillmentGroup.partners', 'fulfillmentGroup.partners', 'fulfillments')
+      .leftJoinAndMapMany('fulfillmentGroup.fulfillments', 'fulfillmentGroup.fulfillments', 'fulfillments')
       .where('1 = 1');
   }
 
