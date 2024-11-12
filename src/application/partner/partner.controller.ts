@@ -26,9 +26,9 @@ import { UpdatePartnerGroupDTO } from './dto/update-partner-group.dto';
 import { UpdatePartnerUsersDTO } from './dto/update-partner-users.dto';
 import { UpdatePartnerDTO } from './dto/update-partner.dto';
 
-import { Permission, Public } from '@/constant/decorators';
+import { Permission, Private } from '@/constant/decorators';
 
-@Public()
+@Private()
 @ApiTags('고객사')
 @Controller('partners')
 export class PartnerController {

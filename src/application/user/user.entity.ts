@@ -13,6 +13,7 @@ import {
 
 import { UserStatus, UserType } from './enums';
 import { UserTokenClaimType } from './types';
+import { Fulfillment } from '../fulfillment/fulfillment.entity';
 import { Partner } from '../partner/partner.entity';
 import { RoleUsers } from '../role/role-users.entity';
 
@@ -46,6 +47,13 @@ export class User {
   @ManyToOne(() => Partner, (e) => e.users, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn()
   partner: Partner;
+
+  @Column({ type: 'bigint', unsigned: true, nullable: true })
+  fulfillmentId: string;
+
+  @ManyToOne(() => Fulfillment, (e) => e.users, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn()
+  fulfillment: Fulfillment;
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;

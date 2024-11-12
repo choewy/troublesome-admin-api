@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './application/auth/auth.module';
+import { FulfillmentModule } from './application/fulfillment/fulfillment.module';
 import { HealthModule } from './application/health';
 import { PartnerModule } from './application/partner/partner.module';
 import { RolePermissionKey } from './application/role/enums';
@@ -33,6 +34,7 @@ import { RedisModule } from './common/redis/redis.module';
     UserModule,
     RoleModule,
     PartnerModule,
+    FulfillmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
