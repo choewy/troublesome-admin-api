@@ -1,6 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { PartnerGroup } from '../partner-company.entity';
+import { PartnerGroup } from '../partner-group.entity';
 import { PartnerDTO } from './patner.dto';
 
 export class PartnerGroupDTO {

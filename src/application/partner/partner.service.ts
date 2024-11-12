@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 
+import { CreatePartnerGroupDTO } from './dto/create-partner-group.dto';
 import { GetPartnerGroupListParamDTO } from './dto/get-partner-group-list-param.dto';
 import { GetPartnerListParamDTO } from './dto/get-partner-list-param.dto';
 import { PartnerGroupExistByNameResultDTO } from './dto/partner-group-exist-by-name-result.dto';
@@ -9,7 +10,7 @@ import { PartnerGroupDTO } from './dto/partner-group.dto';
 import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
 import { PartnerGroupSearchKeywordField, PartnerSearchKeywordField } from './enums';
-import { PartnerGroup } from './partner-company.entity';
+import { PartnerGroup } from './partner-group.entity';
 import { Partner } from './partner.entity';
 
 @Injectable()
@@ -128,5 +129,11 @@ export class PartnerService {
     }
 
     return new PartnerGroupDTO(partnerGroup);
+  }
+
+  async createPartnerGroup(body: CreatePartnerGroupDTO) {
+    await this.partnerGroupRepository.save({
+      name: body.name,
+    });
   }
 }

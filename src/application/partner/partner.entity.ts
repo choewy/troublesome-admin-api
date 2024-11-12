@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { PartnerGroup } from './partner-company.entity';
+import { PartnerGroup } from './partner-group.entity';
 
 @Entity({ name: 'partner', comment: '고객사' })
 export class Partner {

@@ -1,9 +1,10 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { PartnerService } from './partner.service';
 import { RolePermissionKey } from '../role/enums';
 import { CheckExistPartnerGroupByNameParamDTO } from './dto/check-exist-partner-group-by-name-param.dto';
+import { CreatePartnerGroupDTO } from './dto/create-partner-group.dto';
 import { GetPartnerGroupListParamDTO } from './dto/get-partner-group-list-param.dto';
 import { GetPartnerGroupParamDTO } from './dto/get-partner-group-param.dto';
 import { GetPartnerListParamDTO } from './dto/get-partner-list-param.dto';
@@ -42,8 +43,8 @@ export class PartnerController {
   @Post('create')
   @ApiOperation({ summary: '고객사 등록' })
   @ApiCreatedResponse()
-  async createPartner() {
-    return;
+  async createPartner(@Body() body: CreatePartnerGroupDTO) {
+    return this.partnerService.createPartnerGroup(body);
   }
 
   @Permission(RolePermissionKey.PartnerUpdate)
