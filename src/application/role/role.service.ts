@@ -85,21 +85,15 @@ export class RoleService {
   }
 
   async updateRole(body: UpdateRoleDTO) {
-    await this.dataSource.transaction(async (em) => {
-      const roleRepository = em.getRepository(Role);
-      const role = await roleRepository.findOne({
-        relations: { permissions: true },
-        where: { id: body.id },
-      });
-
-      if (role === null || role.editable === false) {
-        return;
-      }
-
-      if (body.name && body.name !== role.name) {
-        await roleRepository.update(body.id, { name: body.name });
-      }
+    const role = await this.roleRepository.findOne({
+      where: { id: body.id },
     });
+
+    if (role === null || role.editable === false || !body.name || body.name === role.name) {
+      return;
+    }
+
+    await this.roleRepository.update(body.id, { name: body.name });
   }
 
   async updateRolePermissions(body: UpdateRolePermissionsDTO) {

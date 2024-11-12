@@ -14,6 +14,7 @@ import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
 import { PartnerGroupDTO } from './dto/partner-group.dto';
 import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
+import { UpdatePartnerGroupDTO } from './dto/update-partner-group.dto';
 
 import { Permission, Public } from '@/constant/decorators';
 
@@ -43,8 +44,8 @@ export class PartnerController {
   @Post('create')
   @ApiOperation({ summary: '고객사 등록' })
   @ApiCreatedResponse()
-  async createPartner(@Body() body: CreatePartnerGroupDTO) {
-    return this.partnerService.createPartnerGroup(body);
+  async createPartner() {
+    return;
   }
 
   @Permission(RolePermissionKey.PartnerUpdate)
@@ -111,8 +112,8 @@ export class PartnerController {
   @Post('groups/create')
   @ApiOperation({ summary: '고객사 그룹 생성' })
   @ApiCreatedResponse()
-  async createPartnerGroup() {
-    return;
+  async createPartnerGroup(@Body() body: CreatePartnerGroupDTO) {
+    return this.partnerService.createPartnerGroup(body);
   }
 
   @Permission(RolePermissionKey.PartnerGroupUpdate)
@@ -120,8 +121,8 @@ export class PartnerController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '고객사 그룹 수정' })
   @ApiNoContentResponse()
-  async updatePartnerGroup() {
-    return;
+  async updatePartnerGroup(@Body() body: UpdatePartnerGroupDTO) {
+    return this.partnerService.updatePartnerGroup(body);
   }
 
   @Permission(RolePermissionKey.PartnerGroupPartnerUpdate)

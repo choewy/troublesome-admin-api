@@ -9,6 +9,7 @@ import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
 import { PartnerGroupDTO } from './dto/partner-group.dto';
 import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
+import { UpdatePartnerGroupDTO } from './dto/update-partner-group.dto';
 import { PartnerGroupSearchKeywordField, PartnerSearchKeywordField } from './enums';
 import { PartnerGroup } from './partner-group.entity';
 import { Partner } from './partner.entity';
@@ -135,5 +136,17 @@ export class PartnerService {
     await this.partnerGroupRepository.save({
       name: body.name,
     });
+  }
+
+  async updatePartnerGroup(body: UpdatePartnerGroupDTO) {
+    const partnerGroup = await this.partnerGroupRepository.findOne({
+      where: { id: body.id },
+    });
+
+    if (partnerGroup === null || !body.name || body.name === partnerGroup.name) {
+      return;
+    }
+
+    await this.partnerGroupRepository.update(body.id, { name: body.name });
   }
 }
