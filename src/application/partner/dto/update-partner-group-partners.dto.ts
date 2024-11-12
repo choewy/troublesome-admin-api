@@ -3,7 +3,7 @@ import { IsArray, IsNotEmpty, IsNumberString, IsOptional } from 'class-validator
 
 import { ToString, ToStringArray } from '@/constant/transformers';
 
-export class UpdateRoleUsersDTO {
+export class UpdatePartnerGroupPartnersDTO {
   @ApiProperty({ type: BigInt })
   @IsNumberString()
   @IsNotEmpty()

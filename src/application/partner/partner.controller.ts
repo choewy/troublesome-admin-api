@@ -16,6 +16,7 @@ import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
 import { PartnerGroupDTO } from './dto/partner-group.dto';
 import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
+import { UpdatePartnerGroupPartnersDTO } from './dto/update-partner-group-partners.dto';
 import { UpdatePartnerGroupDTO } from './dto/update-partner-group.dto';
 
 import { Permission, Public } from '@/constant/decorators';
@@ -132,8 +133,8 @@ export class PartnerController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '고객사 그룹 고객사 추가/삭제' })
   @ApiNoContentResponse()
-  async updatePartnerGroupPartners() {
-    return;
+  async updatePartnerGroupPartners(@Body() body: UpdatePartnerGroupPartnersDTO) {
+    return this.partnerService.updatePartnerGroupPartners(body);
   }
 
   @Permission(RolePermissionKey.PartnerGroupDelete)

@@ -9,6 +9,7 @@ import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
 import { PartnerGroupDTO } from './dto/partner-group.dto';
 import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
+import { UpdatePartnerGroupPartnersDTO } from './dto/update-partner-group-partners.dto';
 import { UpdatePartnerGroupDTO } from './dto/update-partner-group.dto';
 import { PartnerGroupSearchKeywordField, PartnerSearchKeywordField } from './enums';
 import { PartnerGroup } from './partner-group.entity';
@@ -148,6 +149,27 @@ export class PartnerService {
     }
 
     await this.partnerGroupRepository.update(body.id, { name: body.name });
+  }
+
+  async updatePartnerGroupPartners(body: UpdatePartnerGroupPartnersDTO) {
+    await this.dataSource.transaction(async (em) => {
+      const partnerGroupRepository = em.getRepository(PartnerGroup);
+      const partnerGroup = await partnerGroupRepository.findOneBy({ id: body.id });
+
+      if (partnerGroup === null) {
+        return;
+      }
+
+      const partnerRepository = em.getRepository(Partner);
+
+      if (Array.isArray(body.remove) && body.remove.length > 0) {
+        await partnerRepository.update({ id: In(body.remove) }, { partnerGroup: null });
+      }
+
+      if (Array.isArray(body.append) && body.append.length > 9) {
+        await partnerRepository.update({ id: In(body.append) }, { partnerGroup });
+      }
+    });
   }
 
   async deletePartnerGroups(ids: string[]) {
