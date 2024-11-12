@@ -19,12 +19,12 @@ export class Partner {
   @Column({ type: 'varchar', length: 50, comment: '이름' })
   name: string;
 
-  @Column({ type: 'bigint', unsigned: true })
-  partnerGroupId: string;
+  @Column({ type: 'bigint', unsigned: true, nullable: true })
+  partnerGroupId: string | null;
 
-  @ManyToOne(() => PartnerGroup, (e) => e.partners, { onDelete: 'CASCADE' })
+  @ManyToOne(() => PartnerGroup, (e) => e.partners, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn()
-  partnerGroup: PartnerGroup;
+  partnerGroup: PartnerGroup | null;
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;
