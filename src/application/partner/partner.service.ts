@@ -236,6 +236,18 @@ export class PartnerService {
   }
 
   async deletePartners(ids: string[]) {
-    return ids;
+    await this.dataSource.transaction(async (em) => {
+      const partnerRepository = em.getRepository(Partner);
+      const partners = await partnerRepository.find({
+        select: { id: true },
+        where: { id: In(['0'].concat(ids)) },
+      });
+
+      const partnerIds = ['0'].concat(partners.map(({ id }) => id));
+      await partnerRepository.softDelete({ id: In(partnerIds) });
+
+      const userRepository = em.getRepository(User);
+      await userRepository.update({ partnerId: In(partnerIds) }, { partner: null });
+    });
   }
 }

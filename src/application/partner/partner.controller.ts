@@ -9,6 +9,8 @@ import { CreatePartnerGroupDTO } from './dto/create-partner-group.dto';
 import { CreatePartnerDTO } from './dto/create-partner.dto';
 import { DeletePartnerGroupDTO } from './dto/delete-partner-group.dto';
 import { DeletePartnerGroupsDTO } from './dto/delete-partner-groups.dto';
+import { DeletePartnerDTO } from './dto/delete-partner.dto';
+import { DeletePartnersDTO } from './dto/delete-partners.dto';
 import { GetPartnerGroupListParamDTO } from './dto/get-partner-group-list-param.dto';
 import { GetPartnerGroupParamDTO } from './dto/get-partner-group-param.dto';
 import { GetPartnerListParamDTO } from './dto/get-partner-list-param.dto';
@@ -87,8 +89,8 @@ export class PartnerController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '고객사 삭제' })
   @ApiNoContentResponse()
-  async deletePartner() {
-    return;
+  async deletePartner(body: DeletePartnerDTO) {
+    return this.partnerService.deletePartners([body.id]);
   }
 
   @Permission(RolePermissionKey.PartnerDelete)
@@ -96,8 +98,8 @@ export class PartnerController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '고객사 삭제' })
   @ApiNoContentResponse()
-  async deletePartners() {
-    return;
+  async deletePartners(@Body() body: DeletePartnersDTO) {
+    return this.partnerService.deletePartners(body.ids);
   }
 
   @Permission(RolePermissionKey.PartnerGroupList)
