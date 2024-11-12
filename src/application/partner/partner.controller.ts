@@ -3,14 +3,17 @@ import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, 
 
 import { PartnerService } from './partner.service';
 import { RolePermissionKey } from '../role/enums';
+import { CheckExistPartnerByNameParamDTO } from './dto/check-exist-partner-by-name-param.dto';
 import { CheckExistPartnerGroupByNameParamDTO } from './dto/check-exist-partner-group-by-name-param.dto';
 import { CreatePartnerGroupDTO } from './dto/create-partner-group.dto';
+import { CreatePartnerDTO } from './dto/create-partner.dto';
 import { DeletePartnerGroupDTO } from './dto/delete-partner-group.dto';
 import { DeletePartnerGroupsDTO } from './dto/delete-partner-groups.dto';
 import { GetPartnerGroupListParamDTO } from './dto/get-partner-group-list-param.dto';
 import { GetPartnerGroupParamDTO } from './dto/get-partner-group-param.dto';
 import { GetPartnerListParamDTO } from './dto/get-partner-list-param.dto';
 import { GetPartnerParamDTO } from './dto/get-partner-param.dto';
+import { PartnerExistByNameResultDTO } from './dto/partner-exist-by-name-result.dto';
 import { PartnerGroupExistByNameResultDTO } from './dto/partner-group-exist-by-name-result.dto';
 import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
 import { PartnerGroupDTO } from './dto/partner-group.dto';
@@ -43,12 +46,20 @@ export class PartnerController {
     return this.partnerService.getPartnerDetail(param.id);
   }
 
+  @Permission(RolePermissionKey.PartnerRead)
+  @Get('exist')
+  @ApiOperation({ summary: '고객사명 중복 여부 확인' })
+  @ApiOkResponse({ type: PartnerExistByNameResultDTO })
+  async checkExistPartnerByName(@Query() queryParam: CheckExistPartnerByNameParamDTO) {
+    return this.partnerService.checkExistPartnerByName(queryParam.partnerGroupId, queryParam.name);
+  }
+
   @Permission(RolePermissionKey.PartnerCreate)
   @Post('create')
   @ApiOperation({ summary: '고객사 등록' })
   @ApiCreatedResponse()
-  async createPartner() {
-    return;
+  async createPartner(@Body() body: CreatePartnerDTO) {
+    return this.partnerService.createPartner(body);
   }
 
   @Permission(RolePermissionKey.PartnerUpdate)
@@ -95,11 +106,11 @@ export class PartnerController {
     return this.partnerService.getPartnerGroupList(queryParam);
   }
 
-  @Permission(RolePermissionKey.PartnerRead)
+  @Permission(RolePermissionKey.PartnerGroupRead)
   @Get('exist')
   @ApiOperation({ summary: '고객사 그룹명 중복 여부 확인' })
   @ApiOkResponse({ type: PartnerGroupExistByNameResultDTO })
-  async checkExistRoleByName(@Query() queryParam: CheckExistPartnerGroupByNameParamDTO) {
+  async checkExistPartnerGroupByName(@Query() queryParam: CheckExistPartnerGroupByNameParamDTO) {
     return this.partnerService.checkExistPartnerGroupByName(queryParam.name);
   }
 
