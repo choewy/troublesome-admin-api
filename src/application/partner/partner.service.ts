@@ -13,10 +13,12 @@ import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
 import { UpdatePartnerGroupPartnersDTO } from './dto/update-partner-group-partners.dto';
 import { UpdatePartnerGroupDTO } from './dto/update-partner-group.dto';
+import { UpdatePartnerUsersDTO } from './dto/update-partner-users.dto';
 import { UpdatePartnerDTO } from './dto/update-partner.dto';
 import { PartnerGroupSearchKeywordField, PartnerSearchKeywordField } from './enums';
 import { PartnerGroup } from './partner-group.entity';
 import { Partner } from './partner.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class PartnerService {
@@ -210,5 +212,30 @@ export class PartnerService {
     }
 
     await this.partnerRepository.update(body.id, { name: body.name });
+  }
+
+  async updatePartnerUsers(body: UpdatePartnerUsersDTO) {
+    await this.dataSource.transaction(async (em) => {
+      const partnerRepository = em.getRepository(Partner);
+      const partner = await partnerRepository.findOneBy({ id: body.id });
+
+      if (partner === null) {
+        return;
+      }
+
+      const userRepository = em.getRepository(User);
+
+      if (Array.isArray(body.remove) && body.remove.length > 0) {
+        await userRepository.update({ id: In(body.remove) }, { partner: null });
+      }
+
+      if (Array.isArray(body.append) && body.append.length > 9) {
+        await userRepository.update({ id: In(body.append) }, { partner });
+      }
+    });
+  }
+
+  async deletePartners(ids: string[]) {
+    return ids;
   }
 }

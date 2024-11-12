@@ -21,6 +21,7 @@ import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
 import { UpdatePartnerGroupPartnersDTO } from './dto/update-partner-group-partners.dto';
 import { UpdatePartnerGroupDTO } from './dto/update-partner-group.dto';
+import { UpdatePartnerUsersDTO } from './dto/update-partner-users.dto';
 import { UpdatePartnerDTO } from './dto/update-partner.dto';
 
 import { Permission, Public } from '@/constant/decorators';
@@ -77,8 +78,8 @@ export class PartnerController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '고객사 사용자 추가/삭제' })
   @ApiNoContentResponse()
-  async updatePartnerUsers() {
-    return;
+  async updatePartnerUsers(body: UpdatePartnerUsersDTO) {
+    return this.partnerService.updatePartnerUsers(body);
   }
 
   @Permission(RolePermissionKey.PartnerDelete)

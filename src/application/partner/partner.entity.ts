@@ -4,12 +4,15 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { PartnerGroup } from './partner-group.entity';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'partner', comment: '고객사' })
 export class Partner {
@@ -22,9 +25,13 @@ export class Partner {
   @Column({ type: 'bigint', unsigned: true, nullable: true })
   partnerGroupId: string | null;
 
-  @ManyToOne(() => PartnerGroup, (e) => e.partners, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => PartnerGroup, (e) => e.partners, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn()
   partnerGroup: PartnerGroup | null;
+
+  @OneToMany(() => User, (e) => e.partner, { cascade: true })
+  @JoinTable()
+  users: User[];
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;

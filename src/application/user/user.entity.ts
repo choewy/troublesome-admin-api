@@ -3,7 +3,9 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +13,7 @@ import {
 
 import { UserStatus, UserType } from './enums';
 import { UserTokenClaimType } from './types';
+import { Partner } from '../partner/partner.entity';
 import { RoleUsers } from '../role/role-users.entity';
 
 @Entity({ name: 'user', comment: '사용자' })
@@ -36,6 +39,13 @@ export class User {
   @OneToMany(() => RoleUsers, (e) => e.user, { cascade: true })
   @JoinTable()
   roleJoin: RoleUsers[];
+
+  @Column({ type: 'bigint', unsigned: true, nullable: true })
+  partnerId: string;
+
+  @ManyToOne(() => Partner, (e) => e.users, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn()
+  partner: Partner;
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;
