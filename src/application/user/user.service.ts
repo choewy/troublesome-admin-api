@@ -25,6 +25,7 @@ export class UserService {
       .leftJoinAndMapMany('user.roleJoin', 'user.roleJoin', 'roleJoin')
       .leftJoinAndMapOne('roleJoin.role', 'roleJoin.role', 'role')
       .leftJoinAndMapMany('role.permissions', 'role.permissions', 'permissions')
+      .leftJoinAndMapOne('user.partner', 'user.partner', 'partner')
       .where('1 = 1');
   }
 
