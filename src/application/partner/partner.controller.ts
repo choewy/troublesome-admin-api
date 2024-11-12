@@ -10,6 +10,7 @@ import { GetPartnerListParamDTO } from './dto/get-partner-list-param.dto';
 import { GetPartnerParamDTO } from './dto/get-partner-param.dto';
 import { PartnerGroupExistByNameResultDTO } from './dto/partner-group-exist-by-name-result.dto';
 import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
+import { PartnerGroupDTO } from './dto/partner-group.dto';
 import { PartnerListDTO } from './dto/partner-list.dto';
 import { PartnerDTO } from './dto/patner.dto';
 
@@ -34,7 +35,7 @@ export class PartnerController {
   @ApiOperation({ summary: '고객사 조회' })
   @ApiOkResponse({ type: PartnerDTO })
   async getPartnerDetail(@Param() param: GetPartnerParamDTO) {
-    return param;
+    return this.partnerService.getPartnerDetail(param.id);
   }
 
   @Permission(RolePermissionKey.PartnerCreate)
@@ -100,9 +101,9 @@ export class PartnerController {
   @Permission(RolePermissionKey.PartnerGroupRead)
   @Get('groups/detail/:id')
   @ApiOperation({ summary: '고객사 그룹 조회' })
-  @ApiOkResponse()
+  @ApiOkResponse({ type: PartnerGroupDTO })
   async getPartnerGroupDetail(@Param() param: GetPartnerGroupParamDTO) {
-    return param;
+    return this.partnerService.getPartnerGroupDetail(param.id);
   }
 
   @Permission(RolePermissionKey.PartnerGroupCreate)

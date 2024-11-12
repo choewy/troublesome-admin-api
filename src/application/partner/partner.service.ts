@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { GetPartnerGroupListParamDTO } from './dto/get-partner-group-list-param.dto';
 import { GetPartnerListParamDTO } from './dto/get-partner-list-param.dto';
 import { PartnerGroupExistByNameResultDTO } from './dto/partner-group-exist-by-name-result.dto';
 import { PartnerGroupListDTO } from './dto/partner-group-list.dto';
+import { PartnerGroupDTO } from './dto/partner-group.dto';
 import { PartnerListDTO } from './dto/partner-list.dto';
+import { PartnerDTO } from './dto/patner.dto';
 import { PartnerGroupSearchKeywordField, PartnerSearchKeywordField } from './enums';
 import { PartnerGroup } from './partner-company.entity';
 import { Partner } from './partner.entity';
@@ -106,5 +108,25 @@ export class PartnerService {
     const [partners, total] = await builder.skip(params.skip).take(params.take).getManyAndCount();
 
     return new PartnerListDTO(partners, total, params);
+  }
+
+  async getPartnerDetail(id: string) {
+    const partner = await this.partnerQueryBuilder.andWhere('partner.id = :id', { id }).getOne();
+
+    if (partner === null) {
+      throw new BadRequestException('not found partner');
+    }
+
+    return new PartnerDTO(partner);
+  }
+
+  async getPartnerGroupDetail(id: string) {
+    const partnerGroup = await this.partnerGroupQueryBuilder.andWhere('partnerGroup.id = :id', { id }).getOne();
+
+    if (partnerGroup === null) {
+      throw new BadRequestException('not found partner group');
+    }
+
+    return new PartnerGroupDTO(partnerGroup);
   }
 }
