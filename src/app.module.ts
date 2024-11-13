@@ -8,6 +8,7 @@ import { AuthModule } from './application/auth/auth.module';
 import { FulfillmentModule } from './application/fulfillment/fulfillment.module';
 import { HealthModule } from './application/health';
 import { PartnerModule } from './application/partner/partner.module';
+import { PurchaserModule } from './application/purchaser/purchaser.module';
 import { RolePermissionKey } from './application/role/enums';
 import { RolePermission } from './application/role/role-permission.entity';
 import { RoleUsers } from './application/role/role-users.entity';
@@ -35,6 +36,7 @@ import { RedisModule } from './common/redis/redis.module';
     RoleModule,
     PartnerModule,
     FulfillmentModule,
+    PurchaserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
