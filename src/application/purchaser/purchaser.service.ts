@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Brackets, DataSource, In, Repository } from 'typeorm';
 
 import { GetPurchaserListParamDTO } from './dto/get-purchaser-list-param.dto';
-import { PurchaserListDTO } from './dto/purchase-list.dto';
+import { PurchaserListDTO } from './dto/purchaser-list.dto';
 import { PurchaserDTO } from './dto/purchaser.dto';
 import { PurchaserSearchKeywordField } from './enums';
 import { Purchaser } from './purchaser.entity';

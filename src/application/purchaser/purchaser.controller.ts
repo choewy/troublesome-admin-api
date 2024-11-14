@@ -6,7 +6,7 @@ import { DeletePurchaserDTO } from './dto/delete-purchaser.dto';
 import { DeletePurchasersDTO } from './dto/delete-purchasers.dto';
 import { GetPurchaserListParamDTO } from './dto/get-purchaser-list-param.dto';
 import { GetPurchaserParamDTO } from './dto/get-purchaser-param.dto';
-import { PurchaserListDTO } from './dto/purchase-list.dto';
+import { PurchaserListDTO } from './dto/purchaser-list.dto';
 import { PurchaserService } from './purchaser.service';
 import { RolePermissionKey } from '../role/enums';
 import { PurchaserDTO } from './dto/purchaser.dto';
