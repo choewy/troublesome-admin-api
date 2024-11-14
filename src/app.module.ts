@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './application/auth/auth.module';
 import { FulfillmentModule } from './application/fulfillment/fulfillment.module';
 import { HealthModule } from './application/health';
+import { ItemModule } from './application/item/item.module';
 import { PartnerModule } from './application/partner/partner.module';
 import { PurchaserModule } from './application/purchaser/purchaser.module';
 import { RolePermissionKey } from './application/role/enums';
@@ -35,10 +36,11 @@ import { RedisModule } from './common/redis/redis.module';
     AuthModule,
     UserModule,
     RoleModule,
-    PartnerModule,
-    PurchaserModule,
     FulfillmentModule,
     SenderModule,
+    PartnerModule,
+    PurchaserModule,
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],
