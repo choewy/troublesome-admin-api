@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     container_name: troublesome-mysql
     environment:
+      TZ: Asia/Seoul
       MYSQL_USER: troublesome
       MYSQL_PASSWORD: troublesome
       MYSQL_ROOT_PASSWORD: troublesome
-      TZ: Asia/Seoul
     volumes:
       - .docker/mysql/initdb.d:/docker-entrypoint-initdb.d
       - ../troublesome-docker/mysql/data:/var/lib/mysql
@@ -28,6 +28,23 @@ services:
       - ../troublesome-docker/redis/log:/var/log/redis
     ports:
       - 6383:6379
+    restart: unless-stopped
+    networks:
+      - troublesome
+
+  mongo:
+    image: mongo:8.0
+    container_name: troublesome-mongo
+    environment:
+      MONGO_INITDB_DATABASE: troublesome
+      MONGO_INITDB_ROOT_USERNAME: troublesome
+      MONGO_INITDB_ROOT_PASSWORD: troublesome
+    volumes:
+      - .docker/mongo/mongod.conf:/etc/mongod.conf
+      - ../troublesome-docker/mongo/data:/data
+      - ../troublesome-docker/mongo/log:/var/log/mongodb
+    ports:
+      - 27018:27017
     restart: unless-stopped
     networks:
       - troublesome
