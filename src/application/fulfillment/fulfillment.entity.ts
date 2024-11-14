@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { FulfillmentGroup } from './fulfillment-group.entity';
+import { Sender } from '../sender/sender.entity';
 import { User } from '../user/user.entity';
 
 @Entity({ name: 'fulfillment', comment: '풀필먼트' })
@@ -32,6 +33,10 @@ export class Fulfillment {
   @OneToMany(() => User, (e) => e.fulfillment, { cascade: true })
   @JoinTable()
   users: User[];
+
+  @OneToMany(() => Sender, (e) => e.fulfillment, { cascade: true })
+  @JoinTable()
+  senders: Sender[];
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;

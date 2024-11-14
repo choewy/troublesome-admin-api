@@ -14,6 +14,7 @@ import { RolePermission } from './application/role/role-permission.entity';
 import { RoleUsers } from './application/role/role-users.entity';
 import { Role } from './application/role/role.entity';
 import { RoleModule } from './application/role/role.module';
+import { SenderModule } from './application/sender/sender.module';
 import { UserType } from './application/user/enums';
 import { User } from './application/user/user.entity';
 import { UserModule } from './application/user/user.module';
@@ -35,8 +36,9 @@ import { RedisModule } from './common/redis/redis.module';
     UserModule,
     RoleModule,
     PartnerModule,
-    FulfillmentModule,
     PurchaserModule,
+    FulfillmentModule,
+    SenderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
