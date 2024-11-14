@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { GetPurchaserListParamDTO } from './dto/get-purchaser-list-param.dto';
 import { PurchaserListDTO } from './dto/purchase-list.dto';
+import { PurchaserDTO } from './dto/purchaser.dto';
 import { PurchaserSearchKeywordField } from './enums';
 import { Purchaser } from './purchaser.entity';
 
@@ -51,5 +52,15 @@ export class PurchaserService {
     const [purchasers, total] = await builder.skip(params.skip).take(params.take).getManyAndCount();
 
     return new PurchaserListDTO(purchasers, total);
+  }
+
+  async getPurchaserDetail(id: string) {
+    const purchaser = await this.purchaserQueryBuilder.andWhere('purchaser.id = :id', { id }).getOne();
+
+    if (purchaser === null) {
+      throw new BadRequestException('not found purchaser');
+    }
+
+    return new PurchaserDTO(purchaser);
   }
 }
