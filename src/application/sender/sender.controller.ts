@@ -29,7 +29,7 @@ export class SenderController {
   }
 
   @Permission(RolePermissionKey.SenderRead)
-  @Get('detail')
+  @Get('detail/:id')
   @ApiOperation({ summary: '발송인 조회' })
   @ApiOkResponse({ type: SenderDTO })
   async getSenderDetail(@Param() param: GetSenderParamDTO) {

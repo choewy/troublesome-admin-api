@@ -18,7 +18,7 @@ export class ItemController {
 
   @Permission(RolePermissionKey.ItemList)
   @Get('list')
-  @ApiOperation({ summary: '풒목 목록 검색 조회' })
+  @ApiOperation({ summary: '품목 목록 검색 조회' })
   @ApiOkResponse({ type: ItemListDTO })
   async getItemList(@Query() queryParam: GetItemListParamDTO) {
     return this.itemService.getItemList(queryParam);
@@ -26,7 +26,7 @@ export class ItemController {
 
   @Permission(RolePermissionKey.ItemRead)
   @Get('detail/:id')
-  @ApiOperation({ summary: '풒목 조회' })
+  @ApiOperation({ summary: '품목 조회' })
   @ApiOkResponse({ type: ItemDTO })
   async getItemDetail(@Param() param: GetItemParamDTO) {
     return this.itemService.getItemDetail(param.id);
