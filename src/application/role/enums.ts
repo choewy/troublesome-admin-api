@@ -39,6 +39,11 @@ export enum RolePermissionKey {
   FulfillmentUpdate = 'fulfillment.update',
   FulfillmentUserUpdate = 'fulfillment.user.update',
   FulfillmentDelete = 'fulfillment.delete',
+  SenderList = 'sender.list',
+  SenderRead = 'sender.read',
+  SenderCreate = 'sender.create',
+  SenderUpdate = 'sender.update',
+  SenderDelete = 'sender.delete',
 }
 
 export enum RoleSearchKeywordField {
