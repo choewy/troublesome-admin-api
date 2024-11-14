@@ -171,6 +171,10 @@ export class PartnerService {
     });
   }
 
+  async hasPartnerById(id: string) {
+    return !!(await this.partnerRepository.findOne({ select: { id: true }, where: { id } }))?.id;
+  }
+
   async getPartnerList(params: GetPartnerListParamDTO) {
     const builder = this.partnerQueryBuilder;
 

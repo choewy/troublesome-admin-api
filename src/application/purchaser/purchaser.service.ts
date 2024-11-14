@@ -6,12 +6,18 @@ import { PurchaserListDTO } from './dto/purchase-list.dto';
 import { PurchaserDTO } from './dto/purchaser.dto';
 import { PurchaserSearchKeywordField } from './enums';
 import { Purchaser } from './purchaser.entity';
+import { PartnerService } from '../partner/partner.service';
+import { CreatePurchaserDTO } from './dto/create-purchaser.dto';
+import { UpdatePurchaserDTO } from './dto/update-purchaser.dto';
 
 @Injectable()
 export class PurchaserService {
   private readonly purchaserRepository: Repository<Purchaser>;
 
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly partnerService: PartnerService,
+  ) {
     this.purchaserRepository = this.dataSource.getRepository(Purchaser);
   }
 
@@ -62,5 +68,26 @@ export class PurchaserService {
     }
 
     return new PurchaserDTO(purchaser);
+  }
+
+  async createPurchaser(body: CreatePurchaserDTO) {
+    if ((await this.partnerService.hasPartnerById(body.partnerId)) === false) {
+      throw new BadRequestException('not found partner');
+    }
+
+    await this.purchaserRepository.save({
+      partnerId: body.partnerId,
+      name: body.name,
+    });
+  }
+
+  async updatePurchaser(body: UpdatePurchaserDTO) {
+    const purchaser = await this.purchaserRepository.findOneBy({ id: body.id });
+
+    if (purchaser === null || !body.name || purchaser.name === body.name) {
+      return;
+    }
+
+    await this.purchaserRepository.update(body.id, { name: body.name });
   }
 }
