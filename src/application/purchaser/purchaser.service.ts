@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Brackets, DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, In, Repository } from 'typeorm';
 
 import { GetPurchaserListParamDTO } from './dto/get-purchaser-list-param.dto';
 import { PurchaserListDTO } from './dto/purchase-list.dto';
@@ -89,5 +89,21 @@ export class PurchaserService {
     }
 
     await this.purchaserRepository.update(body.id, { name: body.name });
+  }
+
+  async deletePurchasers(ids: string[]) {
+    const purchasers = await this.purchaserRepository.find({
+      select: { id: true },
+      where: { id: In(['0'].concat(ids)) },
+    });
+
+    const purchaserIds = purchasers.map(({ id }) => id);
+
+    if (purchaserIds.length === 0) {
+      return;
+    }
+
+    await this.purchaserRepository.update({ id: In(purchaserIds) }, { partner: null });
+    await this.purchaserRepository.softDelete({ id: In(purchaserIds) });
   }
 }

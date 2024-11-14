@@ -1,7 +1,9 @@
-import { Body, Controller, Get, HttpCode, Patch, Post, Query, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Patch, Post, Query, HttpStatus, Put } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CreatePurchaserDTO } from './dto/create-purchaser.dto';
+import { DeletePurchaserDTO } from './dto/delete-purchaser.dto';
+import { DeletePurchasersDTO } from './dto/delete-purchasers.dto';
 import { GetPurchaserListParamDTO } from './dto/get-purchaser-list-param.dto';
 import { GetPurchaserParamDTO } from './dto/get-purchaser-param.dto';
 import { PurchaserListDTO } from './dto/purchase-list.dto';
@@ -49,5 +51,23 @@ export class PurchaserController {
   @ApiNoContentResponse()
   async updatePurchaser(@Body() body: UpdatePurchaserDTO) {
     return this.purchaserService.updatePurchaser(body);
+  }
+
+  @Permission(RolePermissionKey.PurchaserDelete)
+  @Put('delete')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '매입처 삭제' })
+  @ApiNoContentResponse()
+  async deletePurchaser(@Body() body: DeletePurchaserDTO) {
+    return this.purchaserService.deletePurchasers([body.id]);
+  }
+
+  @Permission(RolePermissionKey.PurchaserDelete)
+  @Put('delete/many')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '매입처 삭제' })
+  @ApiNoContentResponse()
+  async deletePurchasers(@Body() body: DeletePurchasersDTO) {
+    return this.purchaserService.deletePurchasers(body.ids);
   }
 }

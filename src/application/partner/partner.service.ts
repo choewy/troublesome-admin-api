@@ -18,6 +18,7 @@ import { UpdatePartnerDTO } from './dto/update-partner.dto';
 import { PartnerGroupSearchKeywordField, PartnerSearchKeywordField } from './enums';
 import { PartnerGroup } from './partner-group.entity';
 import { Partner } from './partner.entity';
+import { Purchaser } from '../purchaser/purchaser.entity';
 import { User } from '../user/user.entity';
 
 @Injectable()
@@ -252,6 +253,9 @@ export class PartnerService {
 
       const userRepository = em.getRepository(User);
       await userRepository.update({ partnerId: In(partnerIds) }, { partner: null });
+
+      const purchaserRepository = em.getRepository(Purchaser);
+      await purchaserRepository.update({ partnerId: In(partnerIds) }, { partner: null });
     });
   }
 }
