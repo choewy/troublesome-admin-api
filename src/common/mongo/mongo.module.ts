@@ -14,9 +14,11 @@ import { ConfigKey } from '@/constant/enums';
         const port = configService.getOrThrow(ConfigKey.MongoPort);
         const username = configService.getOrThrow(ConfigKey.MongoUsername);
         const password = configService.getOrThrow(ConfigKey.MongoPassword);
+        const dbName = configService.getOrThrow(ConfigKey.MongoDatabase);
+
         const uri = `${protocol}://${username}:${password}@${host}${port ? `:${port}` : ''}`;
 
-        return { uri };
+        return { uri, dbName };
       },
     }),
   ],

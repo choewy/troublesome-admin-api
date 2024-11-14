@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ActionLogModule } from './application/action-log/action-log.module';
 import { AuthModule } from './application/auth/auth.module';
 import { FulfillmentModule } from './application/fulfillment/fulfillment.module';
 import { HealthModule } from './application/health';
@@ -34,6 +35,7 @@ import { RedisModule } from './common/redis/redis.module';
     RedisModule,
     MongoModule,
     HealthModule,
+    ActionLogModule,
     PasswordModule,
     AuthModule,
     UserModule,

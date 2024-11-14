@@ -29,6 +29,7 @@ export enum ConfigKey {
   MongoPort = 'MONGO_PORT',
   MongoUsername = 'MONGO_USERNAME',
   MongoPassword = 'MONGO_PASSWORD',
+  MongoDatabase = 'MONGO_DATABASE',
 }
 
 export enum RequestHeader {
