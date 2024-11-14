@@ -171,6 +171,10 @@ export class FulfillmentService {
     });
   }
 
+  async hasFulfillmentById(id: string) {
+    return !!(await this.fulfillmentRepository.findOne({ select: { id: true }, where: { id } }))?.id;
+  }
+
   async getFulfillmentList(params: GetFulfillmentListParamDTO) {
     const builder = this.fulfillmentQueryBuilder;
 

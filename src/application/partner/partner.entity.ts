@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { PartnerGroup } from './partner-group.entity';
+import { Purchaser } from '../purchaser/purchaser.entity';
 import { User } from '../user/user.entity';
 
 @Entity({ name: 'partner', comment: '고객사' })
@@ -32,6 +33,10 @@ export class Partner {
   @OneToMany(() => User, (e) => e.partner, { cascade: true })
   @JoinTable()
   users: User[];
+
+  @OneToMany(() => Purchaser, (e) => e.partner, { cascade: true })
+  @JoinTable()
+  purchasers: Purchaser[];
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성일시' })
   readonly createdAt: Date;

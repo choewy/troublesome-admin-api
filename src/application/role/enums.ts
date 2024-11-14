@@ -22,6 +22,11 @@ export enum RolePermissionKey {
   PartnerUpdate = 'partner.update',
   PartnerUserUpdate = 'partner.user.update',
   PartnerDelete = 'partner.delete',
+  PurchaserList = 'purchaser.list',
+  PurchaserRead = 'purchaser.read',
+  PurchaserCreate = 'purchaser.create',
+  PurchaserUpdate = 'purchaser.update',
+  PurchaserDelete = 'purchaser.delete',
   FulfillmentGroupList = 'fulfillment-group.list',
   FulfillmentGroupRead = 'fulfillment-group.read',
   FulfillmentGroupCreate = 'fulfillment-group.create',
@@ -34,6 +39,16 @@ export enum RolePermissionKey {
   FulfillmentUpdate = 'fulfillment.update',
   FulfillmentUserUpdate = 'fulfillment.user.update',
   FulfillmentDelete = 'fulfillment.delete',
+  SenderList = 'sender.list',
+  SenderRead = 'sender.read',
+  SenderCreate = 'sender.create',
+  SenderUpdate = 'sender.update',
+  SenderDelete = 'sender.delete',
+  ItemList = 'item.list',
+  ItemRead = 'item.read',
+  ItemCreate = 'item.create',
+  ItemUpdate = 'item.update',
+  ItemDelete = 'item.delete',
 }
 
 export enum RoleSearchKeywordField {
