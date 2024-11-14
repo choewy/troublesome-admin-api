@@ -24,6 +24,11 @@ export enum ConfigKey {
   RedisHost = 'REDIS_HOST',
   RedisPort = 'REDIS_PORT',
   RedisDatabase = 'REDIS_DB',
+  MongoProtocol = 'MONGO_PROTOCOL',
+  MongoHost = 'MONGO_HOST',
+  MongoPort = 'MONGO_PORT',
+  MongoUsername = 'MONGO_USERNAME',
+  MongoPassword = 'MONGO_PASSWORD',
 }
 
 export enum RequestHeader {

@@ -21,6 +21,7 @@ import { User } from './application/user/user.entity';
 import { UserModule } from './application/user/user.module';
 import { ContextModule } from './common/context/context.module';
 import { DatabaseModule } from './common/database/database.module';
+import { MongoModule } from './common/mongo/mongo.module';
 import { PasswordModule } from './common/password/password.module';
 import { PasswordService } from './common/password/password.service';
 import { RedisModule } from './common/redis/redis.module';
@@ -31,6 +32,7 @@ import { RedisModule } from './common/redis/redis.module';
     ContextModule,
     DatabaseModule,
     RedisModule,
+    MongoModule,
     HealthModule,
     PasswordModule,
     AuthModule,
