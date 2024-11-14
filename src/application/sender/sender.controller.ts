@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { SenderService } from './sender.service';
@@ -32,8 +32,8 @@ export class SenderController {
   @Get('detail')
   @ApiOperation({ summary: '발송인 조회' })
   @ApiOkResponse({ type: SenderDTO })
-  async getSenderDetail(@Query() queryParam: GetSenderParamDTO) {
-    return this.senderService.getSenderDetail(queryParam.id);
+  async getSenderDetail(@Param() param: GetSenderParamDTO) {
+    return this.senderService.getSenderDetail(param.id);
   }
 
   @Permission(RolePermissionKey.SenderCreate)

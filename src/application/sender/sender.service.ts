@@ -57,7 +57,7 @@ export class SenderService {
 
     const [senders, total] = await builder.skip(params.skip).take(params.take).getManyAndCount();
 
-    return new SenderListDTO(senders, total);
+    return new SenderListDTO(senders, total, params);
   }
 
   async getSenderDetail(id: string) {

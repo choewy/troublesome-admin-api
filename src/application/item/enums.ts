@@ -8,3 +8,7 @@ export enum ItemUnit {
   Package = 'PK',
   Case = 'CS',
 }
+
+export enum ItemSearchKeywordField {
+  Name = 'name',
+}

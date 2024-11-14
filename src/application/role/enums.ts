@@ -44,6 +44,11 @@ export enum RolePermissionKey {
   SenderCreate = 'sender.create',
   SenderUpdate = 'sender.update',
   SenderDelete = 'sender.delete',
+  ItemList = 'item.list',
+  ItemRead = 'item.read',
+  ItemCreate = 'item.create',
+  ItemUpdate = 'item.update',
+  ItemDelete = 'item.delete',
 }
 
 export enum RoleSearchKeywordField {

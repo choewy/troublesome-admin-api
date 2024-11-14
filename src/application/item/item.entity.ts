@@ -39,12 +39,12 @@ export class Item {
   @Column({ type: 'int', unsigned: true, default: 0, comment: '판매단가' })
   salesPrice: number;
 
-  @Column({ type: 'bigint', unsigned: true, nullable: true })
-  partnerId: string | null;
+  @Column({ type: 'bigint', unsigned: true })
+  partnerId: string;
 
-  @ManyToOne(() => Partner, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => Partner, { onDelete: 'CASCADE' })
   @JoinColumn()
-  partner: Partner | null;
+  partner: Partner;
 
   @Column({ type: 'bigint', unsigned: true, nullable: true })
   purchaserId: string | null;

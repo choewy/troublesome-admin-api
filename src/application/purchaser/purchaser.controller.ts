@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Patch, Post, Query, HttpStatus, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Patch, Post, Query, HttpStatus, Put, Param } from '@nestjs/common';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CreatePurchaserDTO } from './dto/create-purchaser.dto';
@@ -29,11 +29,11 @@ export class PurchaserController {
   }
 
   @Permission(RolePermissionKey.PurchaserRead)
-  @Get('detail')
+  @Get('detail/:id')
   @ApiOperation({ summary: '매입처 조회' })
   @ApiOkResponse({ type: PurchaserDTO })
-  async getPurchaserDetail(@Query() queryParam: GetPurchaserParamDTO) {
-    return this.purchaserService.getPurchaserDetail(queryParam.id);
+  async getPurchaserDetail(@Param() param: GetPurchaserParamDTO) {
+    return this.purchaserService.getPurchaserDetail(param.id);
   }
 
   @Permission(RolePermissionKey.PurchaserCreate)

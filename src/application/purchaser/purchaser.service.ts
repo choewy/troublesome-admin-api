@@ -57,7 +57,7 @@ export class PurchaserService {
 
     const [purchasers, total] = await builder.skip(params.skip).take(params.take).getManyAndCount();
 
-    return new PurchaserListDTO(purchasers, total);
+    return new PurchaserListDTO(purchasers, total, params);
   }
 
   async getPurchaserDetail(id: string) {
