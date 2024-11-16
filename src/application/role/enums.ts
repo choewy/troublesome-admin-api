@@ -49,6 +49,9 @@ export enum RolePermissionKey {
   ItemCreate = 'item.create',
   ItemUpdate = 'item.update',
   ItemDelete = 'item.delete',
+  PlatformCreate = 'platform.create',
+  PlatformUpdate = 'platform.update',
+  PlatformDelete = 'platform.delete',
 }
 
 export enum RoleSearchKeywordField {

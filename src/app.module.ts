@@ -10,6 +10,7 @@ import { FulfillmentModule } from './application/fulfillment/fulfillment.module'
 import { HealthModule } from './application/health';
 import { ItemModule } from './application/item/item.module';
 import { PartnerModule } from './application/partner/partner.module';
+import { PlatformModule } from './application/platform/platform.module';
 import { PurchaserModule } from './application/purchaser/purchaser.module';
 import { RolePermissionKey } from './application/role/enums';
 import { RolePermission } from './application/role/role-permission.entity';
@@ -37,6 +38,7 @@ import { RedisModule } from './common/redis/redis.module';
     HealthModule,
     ActionLogModule,
     PasswordModule,
+    PlatformModule,
     AuthModule,
     UserModule,
     RoleModule,
