@@ -11,7 +11,7 @@ export class UpdateItemDTO {
   @IsNumberString()
   @IsNotEmpty()
   @ToString()
-  itemId: string;
+  id: string;
 
   @ApiPropertyOptional({ type: BigInt, description: '판매처 PK' })
   @IsNumberString()

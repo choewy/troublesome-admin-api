@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Brackets, DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, In, Repository } from 'typeorm';
 
 import { CreateItemDTO } from './dto/create-item.dto';
 import { GetItemListParamDTO } from './dto/get-item-list-param.dto';
@@ -129,7 +129,7 @@ export class ItemService {
   }
 
   async updateItem(body: UpdateItemDTO) {
-    const item = await this.itemRepository.findOneBy({ id: body.itemId });
+    const item = await this.itemRepository.findOneBy({ id: body.id });
 
     if (item === null) {
       return;
@@ -191,5 +191,16 @@ export class ItemService {
         );
       }
     });
+  }
+
+  async deleteItems(ids: string[]) {
+    const items = await this.itemRepository.find({ select: { id: true }, where: { id: In(['0'].concat(ids)) } });
+    const itemIds = items.map(({ id }) => id);
+
+    if (itemIds.length === 0) {
+      return;
+    }
+
+    await this.itemRepository.softDelete({ id: In(itemIds) });
   }
 }
