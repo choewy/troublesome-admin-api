@@ -8,21 +8,22 @@ import { ItemDTO } from './dto/item.dto';
 import { ItemSearchKeywordField, ItemType } from './enums';
 import { ItemBundle } from './item-bundle.entity';
 import { Item } from './item.entity';
+import { PartnerService } from '../partner/partner.service';
 import { PurchaserService } from '../purchaser/purchaser.service';
 import { UserService } from '../user/user.service';
+import { UpdateItemDTO } from './dto/update-item.dto';
 
 @Injectable()
 export class ItemService {
   private readonly itemRepository: Repository<Item>;
-  private readonly itemBundleRepository: Repository<ItemBundle>;
 
   constructor(
     private readonly dataSource: DataSource,
     private readonly userService: UserService,
+    private readonly partnerService: PartnerService,
     private readonly purchaserService: PurchaserService,
   ) {
     this.itemRepository = this.dataSource.getRepository(Item);
-    this.itemBundleRepository = this.dataSource.getRepository(ItemBundle);
   }
 
   private get itemQueryBuilder() {
@@ -52,6 +53,16 @@ export class ItemService {
 
       return qb;
     });
+  }
+
+  async hasItemById(id: string) {
+    return (
+      (await this.itemRepository.count({
+        select: { id: true },
+        where: { id },
+        take: 1,
+      })) > 0
+    );
   }
 
   async getItemList(params: GetItemListParamDTO) {
@@ -89,12 +100,16 @@ export class ItemService {
       throw new ForbiddenException('cannot create item');
     }
 
-    if (body.type === ItemType.Combo && (Array.isArray(body.bundle) === false || body.bundle.length === 0)) {
-      throw new BadRequestException('required bundle');
+    if (body.partnerId && (await this.partnerService.hasPartnerById(body.partnerId)) === false) {
+      throw new BadRequestException('not found partner');
     }
 
     if (body.purchaserId && (await this.purchaserService.hasPurchaserById(body.purchaserId)) === false) {
       throw new BadRequestException('not found purchaser');
+    }
+
+    if (body.type === ItemType.Combo && (Array.isArray(body.bundle) === false || body.bundle.length === 0)) {
+      throw new BadRequestException('required bundle');
     }
 
     await this.itemRepository.save({
@@ -110,6 +125,71 @@ export class ItemService {
         singleItemId: singleItem.itemId,
         singleItemCount: singleItem.itemCount,
       })),
+    });
+  }
+
+  async updateItem(body: UpdateItemDTO) {
+    const item = await this.itemRepository.findOneBy({ id: body.itemId });
+
+    if (item === null) {
+      return;
+    }
+
+    if (this.userService.isCorrectRequestUserPartner(body.partnerId) === false) {
+      throw new ForbiddenException('cannot create item');
+    }
+
+    if (body.partnerId && (await this.partnerService.hasPartnerById(body.partnerId)) === false) {
+      throw new BadRequestException('not found partner');
+    }
+
+    if (body.purchaserId && (await this.purchaserService.hasPurchaserById(body.purchaserId)) === false) {
+      throw new BadRequestException('not found purchaser');
+    }
+
+    if (body.type === ItemType.Combo && (Array.isArray(body.bundle) === false || body.bundle.length === 0)) {
+      throw new BadRequestException('required bundle');
+    }
+
+    await this.dataSource.transaction(async (em) => {
+      const itemRepository = em.getRepository(Item);
+
+      if (
+        (body.name && item.name !== body.name) ||
+        (body.type && item.type !== body.type) ||
+        (body.unit && item.unit !== body.unit) ||
+        (body.quantity && item.quantity !== body.quantity) ||
+        (typeof body.purchasePrice === 'number' && item.purchasePrice !== body.purchasePrice) ||
+        (typeof body.salesPrice === 'number' && item.salesPrice !== body.salesPrice)
+      ) {
+        await itemRepository.update(item.id, {
+          partnerId: body.partnerId,
+          purchaserId: body.purchaserId,
+          name: body.name,
+          type: body.type,
+          unit: body.unit,
+          quantity: body.quantity,
+          purchasePrice: body.purchasePrice,
+          salesPrice: body.salesPrice,
+        });
+      }
+
+      const itemBundleRepository = em.getRepository(ItemBundle);
+
+      if (body.type === ItemType.Single) {
+        await itemBundleRepository.delete({ comboItem: item });
+      }
+
+      if (Array.isArray(body.bundle) && body.bundle.length > 0) {
+        await itemBundleRepository.delete({ comboItem: item });
+        await itemBundleRepository.insert(
+          body.bundle.map((singleItem) => ({
+            comboItem: item,
+            singleItemId: singleItem.itemId,
+            singleItemCount: singleItem.itemCount,
+          })),
+        );
+      }
     });
   }
 }

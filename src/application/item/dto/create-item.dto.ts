@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsInstance, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 
 import { ItemType, ItemUnit } from '../enums';
-import { CreateItemBundleDTO } from './create-item-bundle.dto';
+import { SetItemBundleDTO } from './set-item-bundle.dto';
 
 import { ToNull, ToString } from '@/constant/transformers';
 
@@ -50,9 +50,9 @@ export class CreateItemDTO {
   @IsNotEmpty()
   salesPrice: number;
 
-  @ApiPropertyOptional({ type: [CreateItemBundleDTO], description: '세트 구성품' })
-  @IsInstance(CreateItemBundleDTO, { each: true })
+  @ApiPropertyOptional({ type: [SetItemBundleDTO], description: '세트 구성품' })
+  @IsInstance(SetItemBundleDTO, { each: true })
   @IsArray()
   @IsOptional()
-  bundle?: CreateItemBundleDTO[];
+  bundle?: SetItemBundleDTO[];
 }

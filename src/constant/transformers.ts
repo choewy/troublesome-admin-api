@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 
-export const toString = <T = any>(val: T) => String(val);
+export const toString = <T = any>(val: T) => (val == null ? val : String(val));
 export const ToString = () => Transform(({ value }) => toString(value));
 
 export const toNull = <T = any>(val: T) => (val == null ? null : val);

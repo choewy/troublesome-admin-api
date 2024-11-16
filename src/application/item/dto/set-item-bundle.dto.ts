@@ -3,7 +3,7 @@ import { IsNotEmpty, IsNumber, IsNumberString } from 'class-validator';
 
 import { ToString } from '@/constant/transformers';
 
-export class CreateItemBundleDTO {
+export class SetItemBundleDTO {
   @ApiProperty({ type: BigInt, description: '구성품목 PK' })
   @IsNumberString()
   @IsNotEmpty()
