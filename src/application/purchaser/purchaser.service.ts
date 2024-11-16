@@ -48,6 +48,16 @@ export class PurchaserService {
     });
   }
 
+  async hasPurchaserById(id: string) {
+    return (
+      (await this.purchaserRepository.count({
+        select: { id: true },
+        where: { id },
+        take: 1,
+      })) > 0
+    );
+  }
+
   async getPurchaserList(params: GetPurchaserListParamDTO) {
     const builder = this.purchaserQueryBuilder;
 

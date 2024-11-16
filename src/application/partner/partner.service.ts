@@ -173,7 +173,7 @@ export class PartnerService {
   }
 
   async hasPartnerById(id: string) {
-    return !!(await this.partnerRepository.findOne({ select: { id: true }, where: { id } }))?.id;
+    return (await this.partnerRepository.count({ select: { id: true }, where: { id }, take: 1 })) > 0;
   }
 
   async getPartnerList(params: GetPartnerListParamDTO) {

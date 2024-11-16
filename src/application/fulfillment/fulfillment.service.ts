@@ -172,7 +172,7 @@ export class FulfillmentService {
   }
 
   async hasFulfillmentById(id: string) {
-    return !!(await this.fulfillmentRepository.findOne({ select: { id: true }, where: { id } }))?.id;
+    return (await this.fulfillmentRepository.count({ select: { id: true }, where: { id }, take: 1 })) > 0;
   }
 
   async getFulfillmentList(params: GetFulfillmentListParamDTO) {
