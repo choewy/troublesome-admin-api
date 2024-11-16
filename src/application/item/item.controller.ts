@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { GetItemListParamDTO } from './dto/get-item-list-param.dto';
 import { RolePermissionKey } from '../role/enums';
+import { CreateItemDTO } from './dto/create-item.dto';
 import { GetItemParamDTO } from './dto/get-item-param.dto';
 import { ItemListDTO } from './dto/item-list.dto';
 import { ItemDTO } from './dto/item.dto';
@@ -30,5 +31,13 @@ export class ItemController {
   @ApiOkResponse({ type: ItemDTO })
   async getItemDetail(@Param() param: GetItemParamDTO) {
     return this.itemService.getItemDetail(param.id);
+  }
+
+  @Permission(RolePermissionKey.ItemCreate)
+  @Post('create')
+  @ApiOperation({ summary: '품목 등록' })
+  @ApiCreatedResponse()
+  async createItem(@Body() body: CreateItemDTO) {
+    return this.itemService.createItem(body);
   }
 }

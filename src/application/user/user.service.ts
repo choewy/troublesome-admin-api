@@ -3,15 +3,32 @@ import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { GetUserListParamsDTO } from './dto/get-user-list-param.dto';
 import { UserListDTO } from './dto/user-list.dto';
-import { UserSearchKeywordField } from './enums';
+import { UserSearchKeywordField, UserType } from './enums';
 import { User } from './user.entity';
+
+import { ContextService } from '@/common/context/context.service';
 
 @Injectable()
 export class UserService {
   private readonly userRepository: Repository<User>;
 
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly contextService: ContextService,
+  ) {
     this.userRepository = this.dataSource.getRepository(User);
+  }
+
+  public isAdminRequestUser() {
+    return this.contextService.getRequestUser<User>()?.type === UserType.Admin;
+  }
+
+  public isCorrectRequestUserPartner(partnerId: string) {
+    return this.isAdminRequestUser() || this.contextService.getRequestUser<User>()?.partnerId === partnerId;
+  }
+
+  public isCorrectRequestUserFulfillment(fulfillmentId: string) {
+    return this.isAdminRequestUser() || this.contextService.getRequestUser<User>()?.fulfillmentId === fulfillmentId;
   }
 
   private get userQueryBuilder() {

@@ -1,19 +1,26 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 
+import { CreateItemDTO } from './dto/create-item.dto';
 import { GetItemListParamDTO } from './dto/get-item-list-param.dto';
 import { ItemListDTO } from './dto/item-list.dto';
 import { ItemDTO } from './dto/item.dto';
-import { ItemSearchKeywordField } from './enums';
+import { ItemSearchKeywordField, ItemType } from './enums';
 import { ItemBundle } from './item-bundle.entity';
 import { Item } from './item.entity';
+import { PurchaserService } from '../purchaser/purchaser.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ItemService {
   private readonly itemRepository: Repository<Item>;
   private readonly itemBundleRepository: Repository<ItemBundle>;
 
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly userService: UserService,
+    private readonly purchaserService: PurchaserService,
+  ) {
     this.itemRepository = this.dataSource.getRepository(Item);
     this.itemBundleRepository = this.dataSource.getRepository(ItemBundle);
   }
@@ -75,5 +82,34 @@ export class ItemService {
     }
 
     return new ItemDTO(item);
+  }
+
+  async createItem(body: CreateItemDTO) {
+    if (this.userService.isCorrectRequestUserPartner(body.partnerId) === false) {
+      throw new ForbiddenException('cannot create item');
+    }
+
+    if (body.type === ItemType.Combo && (Array.isArray(body.bundle) === false || body.bundle.length === 0)) {
+      throw new BadRequestException('required bundle');
+    }
+
+    if (body.purchaserId && (await this.purchaserService.hasPurchaserById(body.purchaserId)) === false) {
+      throw new BadRequestException('not found purchaser');
+    }
+
+    await this.itemRepository.save({
+      partnerId: body.partnerId,
+      purchaserId: body.purchaserId,
+      type: body.type,
+      name: body.name,
+      unit: body.unit,
+      quantity: body.quantity,
+      purchasePrice: body.purchasePrice,
+      salesPrice: body.salesPrice,
+      singleItemBundle: body.bundle.map((singleItem) => ({
+        singleItemId: singleItem.itemId,
+        singleItemCount: singleItem.itemCount,
+      })),
+    });
   }
 }
