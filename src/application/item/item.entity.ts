@@ -24,7 +24,7 @@ export class Item {
   @Column({ type: 'varchar', length: 10, comment: '종류' })
   type: ItemType;
 
-  @Column({ type: 'varchar', length: 300, comment: '이름' })
+  @Column({ type: 'varchar', length: 300, comment: '품목명' })
   name: string;
 
   @Column({ type: 'varchar', length: 10, comment: '단위' })

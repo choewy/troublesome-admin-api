@@ -53,7 +53,7 @@ export class ItemController {
     return this.itemService.updateItem(body);
   }
 
-  @Permission(RolePermissionKey.PurchaserDelete)
+  @Permission(RolePermissionKey.ItemDelete)
   @Put('delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '품목 삭제' })
@@ -62,7 +62,7 @@ export class ItemController {
     return this.itemService.deleteItems([body.id]);
   }
 
-  @Permission(RolePermissionKey.PurchaserDelete)
+  @Permission(RolePermissionKey.ItemDelete)
   @Put('delete/many')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '품목 삭제' })
