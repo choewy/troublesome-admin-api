@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
+import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { GetItemListParamDTO } from './dto/get-item-list-param.dto';
 import { RolePermissionKey } from '../role/enums';
@@ -7,6 +7,7 @@ import { CreateItemDTO } from './dto/create-item.dto';
 import { GetItemParamDTO } from './dto/get-item-param.dto';
 import { ItemListDTO } from './dto/item-list.dto';
 import { ItemDTO } from './dto/item.dto';
+import { UpdateItemDTO } from './dto/update-item.dto';
 import { ItemService } from './item.service';
 
 import { Permission, Private } from '@/constant/decorators';
@@ -39,5 +40,14 @@ export class ItemController {
   @ApiCreatedResponse()
   async createItem(@Body() body: CreateItemDTO) {
     return this.itemService.createItem(body);
+  }
+
+  @Permission(RolePermissionKey.ItemUpdate)
+  @Patch('update')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '품목 수정' })
+  @ApiNoContentResponse()
+  async updateItem(@Body() body: UpdateItemDTO) {
+    return this.itemService.updateItem(body);
   }
 }
