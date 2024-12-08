@@ -9,6 +9,7 @@ import { AuthModule } from './application/auth/auth.module';
 import { FulfillmentModule } from './application/fulfillment/fulfillment.module';
 import { HealthModule } from './application/health';
 import { ItemModule } from './application/item/item.module';
+import { MallModule } from './application/mall/mall.module';
 import { PartnerModule } from './application/partner/partner.module';
 import { PlatformModule } from './application/platform/platform.module';
 import { PurchaserModule } from './application/purchaser/purchaser.module';
@@ -46,6 +47,7 @@ import { RedisModule } from './common/redis/redis.module';
     SenderModule,
     PartnerModule,
     PurchaserModule,
+    MallModule,
     ItemModule,
   ],
   controllers: [AppController],

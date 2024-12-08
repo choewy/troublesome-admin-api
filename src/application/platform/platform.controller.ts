@@ -10,15 +10,16 @@ import { GetPlatformListParamDTO } from './dto/get-platform-list-param.dto';
 import { PlatformListDTO } from './dto/platform-list.dto';
 import { UpdatePlatformDTO } from './dto/update-platform.dto';
 
-import { Permission } from '@/constant/decorators';
+import { Permission, Private } from '@/constant/decorators';
 
-@ApiTags('플랫폼')
+@Private()
+@ApiTags('판매 플랫폼')
 @Controller('platforms')
 export class PlatformController {
   constructor(private readonly platformService: PlatformService) {}
 
   @Get('list')
-  @ApiOperation({ summary: '플랫폼 목록 조회' })
+  @ApiOperation({ summary: '판매 플랫폼 목록 조회' })
   @ApiOkResponse({ type: PlatformListDTO })
   async getItemList(@Query() queryParam: GetPlatformListParamDTO) {
     return this.platformService.getPlatformList(queryParam);
@@ -26,7 +27,7 @@ export class PlatformController {
 
   @Permission(RolePermissionKey.PlatformCreate)
   @Post('create')
-  @ApiOperation({ summary: '플랫폼 등록' })
+  @ApiOperation({ summary: '판매 플랫폼 등록' })
   @ApiCreatedResponse()
   async createPlatform(@Body() body: CreatePlatformDTO) {
     return this.platformService.createPlatform(body);
@@ -35,7 +36,7 @@ export class PlatformController {
   @Permission(RolePermissionKey.PlatformUpdate)
   @Patch('update')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: '플랫폼 수정' })
+  @ApiOperation({ summary: '판매 플랫폼 수정' })
   @ApiNoContentResponse()
   async updatePlatform(@Body() body: UpdatePlatformDTO) {
     return this.platformService.updatePlatform(body);
@@ -44,7 +45,7 @@ export class PlatformController {
   @Permission(RolePermissionKey.PlatformDelete)
   @Put('delete')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: '플랫폼 삭제' })
+  @ApiOperation({ summary: '판매 플랫폼 삭제' })
   @ApiNoContentResponse()
   async deletePlatform(@Body() body: DeletePlatformDTO) {
     return this.platformService.deletePlatforms([body.id]);
@@ -53,7 +54,7 @@ export class PlatformController {
   @Permission(RolePermissionKey.PlatformDelete)
   @Put('delete/many')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: '플랫폼 삭제' })
+  @ApiOperation({ summary: '판매 플랫폼 삭제' })
   @ApiNoContentResponse()
   async deletePlatforms(@Body() body: DeletePlatformsDTO) {
     return this.platformService.deletePlatforms(body.ids);
